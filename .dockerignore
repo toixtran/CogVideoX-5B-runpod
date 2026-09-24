@@ -1,4 +1,5 @@
-# Build context chỉ cần docker/ và nodes/ — tuyệt đối không gửi comfyui/ (models ~17GB).
+# Build context chỉ cần docker/, nodes/, handler.py — tuyệt đối không gửi comfyui/ (models ~17GB).
 *
 !docker/
 !nodes/
+!handler.py

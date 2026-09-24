@@ -37,6 +37,10 @@ ADD https://github.com/Fannovel16/ComfyUI-Frame-Interpolation/releases/download/
 
 COPY nodes/free_memory_after_run.py /comfyui/custom_nodes/free_memory_after_run.py
 
+# handler.py (repo) thay /handler.py gốc và import lại handler gốc.
+RUN mv /handler.py /worker_comfyui_handler.py
+COPY handler.py /handler.py
+
 # start.sh symlink cached model -> models/CogVideo/CogVideoX-5b-I2V rồi chạy /start.sh gốc.
 RUN mkdir -p /comfyui/models/CogVideo
 COPY --chmod=755 docker/start.sh /start-cogvideox.sh

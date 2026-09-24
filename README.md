@@ -29,6 +29,7 @@ local (RTX 4070 Super 12GB), chạy production trên **RunPod Serverless** (GPU 
 │   └── runpod_client.py        # gửi job: prompt + ảnh -> video (lõi backend)
 ├── nodes/free_memory_after_run.py  # giải phóng VRAM sau mỗi job
 ├── Dockerfile                  # image worker RunPod (RunPod build từ GitHub)
+├── handler.py                  # entrypoint RunPod: dùng lại handler của worker-comfyui
 └── docker/                     # start.sh, build/test local — xem docker/README.md
 ```
 
