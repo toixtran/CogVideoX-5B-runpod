@@ -1,0 +1,257 @@
+{
+  "1": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "t5xxl_fp8_e4m3fn.safetensors",
+      "type": "sd3",
+      "device": "default"
+    },
+    "_meta": {
+      "title": "Load T5 Text Encoder (fp8)"
+    }
+  },
+  "2": {
+    "class_type": "CogVideoTextEncode",
+    "inputs": {
+      "clip": [
+        "1",
+        0
+      ],
+      "prompt": "A cartoon character drawn in a simple 2D style with bold black outlines and flat colors stands in the center of the frame, facing the camera. The character smiles warmly, blinks, tilts its head slightly to one side, and waves one hand at the viewer. Its hair and clothes sway gently as if in a light breeze. The background stays still. Smooth, natural motion, high quality 2D animation, static camera, 16:9 wide shot.",
+      "strength": 1,
+      "force_offload": false
+    },
+    "_meta": {
+      "title": "✏️ Positive Prompt"
+    }
+  },
+  "3": {
+    "class_type": "CogVideoTextEncode",
+    "inputs": {
+      "clip": [
+        "2",
+        1
+      ],
+      "prompt": "The video is not of a high quality, it has a low resolution. Watermark present in each frame. Strange motion trajectory. Blurry, distorted, flickering, jittery, morphing face, extra limbs, text, subtitles.",
+      "strength": 1,
+      "force_offload": true
+    },
+    "_meta": {
+      "title": "Negative Prompt"
+    }
+  },
+  "4": {
+    "class_type": "DownloadAndLoadCogVideoModel",
+    "inputs": {
+      "model": "THUDM/CogVideoX-5b-I2V",
+      "precision": "bf16",
+      "quantization": "fp8_e4m3fn",
+      "enable_sequential_cpu_offload": false,
+      "attention_mode": "sdpa",
+      "load_device": "main_device"
+    },
+    "_meta": {
+      "title": "Load CogVideoX-5B I2V (fp8)"
+    }
+  },
+  "5": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "example.png"
+    },
+    "_meta": {
+      "title": "✏️ Input Image (ảnh ngang)"
+    }
+  },
+  "6": {
+    "class_type": "ImageScale",
+    "inputs": {
+      "image": [
+        "5",
+        0
+      ],
+      "upscale_method": "lanczos",
+      "width": 720,
+      "height": 480,
+      "crop": "center"
+    },
+    "_meta": {
+      "title": "Resize 720x480 (kích thước gốc của model)"
+    }
+  },
+  "7": {
+    "class_type": "CogVideoImageEncode",
+    "inputs": {
+      "vae": [
+        "4",
+        1
+      ],
+      "start_image": [
+        "6",
+        0
+      ],
+      "enable_tiling": false,
+      "noise_aug_strength": 0.05,
+      "strength": 1,
+      "start_percent": 0,
+      "end_percent": 1
+    },
+    "_meta": {
+      "title": "CogVideoImageEncode"
+    }
+  },
+  "8": {
+    "class_type": "CogVideoSampler",
+    "inputs": {
+      "model": [
+        "4",
+        0
+      ],
+      "positive": [
+        "2",
+        0
+      ],
+      "negative": [
+        "3",
+        0
+      ],
+      "image_cond_latents": [
+        "7",
+        0
+      ],
+      "num_frames": 49,
+      "steps": 25,
+      "cfg": 6,
+      "seed": 42,
+      "scheduler": "CogVideoXDDIM",
+      "denoise_strength": 1
+    },
+    "_meta": {
+      "title": "✏️ CogVideo Sampler (steps / seed)"
+    }
+  },
+  "9": {
+    "class_type": "CogVideoDecode",
+    "inputs": {
+      "vae": [
+        "4",
+        1
+      ],
+      "samples": [
+        "8",
+        0
+      ],
+      "enable_vae_tiling": true,
+      "tile_sample_min_height": 240,
+      "tile_sample_min_width": 360,
+      "tile_overlap_factor_height": 0.2,
+      "tile_overlap_factor_width": 0.2,
+      "auto_tile_size": true
+    },
+    "_meta": {
+      "title": "CogVideoDecode"
+    }
+  },
+  "11": {
+    "class_type": "ImageCrop",
+    "inputs": {
+      "image": [
+        "9",
+        0
+      ],
+      "width": 720,
+      "height": 405,
+      "x": 0,
+      "y": 37
+    },
+    "_meta": {
+      "title": "Crop 16:9 (720x405)"
+    }
+  },
+  "12": {
+    "class_type": "UpscaleModelLoader",
+    "inputs": {
+      "model_name": "RealESRGAN_x2plus.pth"
+    },
+    "_meta": {
+      "title": "Load RealESRGAN x2"
+    }
+  },
+  "13": {
+    "class_type": "ImageUpscaleWithModel",
+    "inputs": {
+      "upscale_model": [
+        "12",
+        0
+      ],
+      "image": [
+        "11",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "AI Upscale x2 (1440x810)"
+    }
+  },
+  "14": {
+    "class_type": "ImageScale",
+    "inputs": {
+      "image": [
+        "13",
+        0
+      ],
+      "upscale_method": "lanczos",
+      "width": 1920,
+      "height": 1080,
+      "crop": "disabled"
+    },
+    "_meta": {
+      "title": "Resize 1920x1080"
+    }
+  },
+  "15": {
+    "class_type": "RIFE VFI",
+    "inputs": {
+      "frames": [
+        "14",
+        0
+      ],
+      "ckpt_name": "rife49.pth",
+      "clear_cache_after_n_frames": 10,
+      "multiplier": 3,
+      "fast_mode": true,
+      "ensemble": true,
+      "scale_factor": 1.0,
+      "dtype": "float16",
+      "torch_compile": false,
+      "batch_size": 1
+    },
+    "_meta": {
+      "title": "Nội suy 8fps → 24fps (RIFE x3)"
+    }
+  },
+  "10": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "16",
+        0
+      ],
+      "filename_prefix": "YouTube/CogVideoX-16x9",
+      "format": "mp4",
+      "format.codec": "h264",
+      "format.codec.encoding": "re-encode",
+      "format.codec.encoding.crf": 17
+    }
+  },
+  "16": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "15",
+        0
+      ],
+      "fps": 24
+    }
+  }
+}

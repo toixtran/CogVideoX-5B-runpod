@@ -1,0 +1,972 @@
+{
+  "last_node_id": 16,
+  "last_link_id": 17,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "CLIPLoader",
+      "pos": [
+        20,
+        60
+      ],
+      "size": [
+        380,
+        106
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            1
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "t5xxl_fp8_e4m3fn.safetensors",
+        "sd3",
+        "default"
+      ],
+      "title": "Load T5 Text Encoder (fp8)"
+    },
+    {
+      "id": 2,
+      "type": "CogVideoTextEncode",
+      "pos": [
+        440,
+        60
+      ],
+      "size": [
+        480,
+        260
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "links": [
+            7
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "links": [
+            2
+          ],
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CogVideoTextEncode"
+      },
+      "widgets_values": [
+        "A cartoon character drawn in a simple 2D style with bold black outlines and flat colors stands in the center of the frame, facing the camera. The character smiles warmly, blinks, tilts its head slightly to one side, and waves one hand at the viewer. Its hair and clothes sway gently as if in a light breeze. The background stays still. Smooth, natural motion, high quality 2D animation, static camera, 16:9 wide shot.",
+        1,
+        false
+      ],
+      "title": "✏️ Positive Prompt",
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 3,
+      "type": "CogVideoTextEncode",
+      "pos": [
+        440,
+        360
+      ],
+      "size": [
+        480,
+        150
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "links": [
+            8
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "links": [],
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CogVideoTextEncode"
+      },
+      "widgets_values": [
+        "The video is not of a high quality, it has a low resolution. Watermark present in each frame. Strange motion trajectory. Blurry, distorted, flickering, jittery, morphing face, extra limbs, text, subtitles.",
+        1,
+        true
+      ],
+      "title": "Negative Prompt"
+    },
+    {
+      "id": 4,
+      "type": "DownloadAndLoadCogVideoModel",
+      "pos": [
+        20,
+        560
+      ],
+      "size": [
+        380,
+        230
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "block_edit",
+          "type": "TRANSFORMERBLOCKS",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "lora",
+          "type": "COGLORA",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "compile_args",
+          "type": "COMPILEARGS",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "model",
+          "type": "COGVIDEOMODEL",
+          "links": [
+            6
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "links": [
+            4,
+            10
+          ],
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "DownloadAndLoadCogVideoModel"
+      },
+      "widgets_values": [
+        "THUDM/CogVideoX-5b-I2V",
+        "bf16",
+        "fp8_e4m3fn",
+        false,
+        "sdpa",
+        "offload_device"
+      ],
+      "title": "Load CogVideoX-5B I2V (fp8)"
+    },
+    {
+      "id": 5,
+      "type": "LoadImage",
+      "pos": [
+        20,
+        210
+      ],
+      "size": [
+        380,
+        320
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            3
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [],
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "example.png",
+        "image"
+      ],
+      "title": "✏️ Input Image (ảnh ngang)",
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 6,
+      "type": "ImageScale",
+      "pos": [
+        440,
+        550
+      ],
+      "size": [
+        320,
+        130
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            5
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageScale"
+      },
+      "widgets_values": [
+        "lanczos",
+        720,
+        480,
+        "center"
+      ],
+      "title": "Resize 720x480 (kích thước gốc của model)"
+    },
+    {
+      "id": 7,
+      "type": "CogVideoImageEncode",
+      "pos": [
+        440,
+        720
+      ],
+      "size": [
+        320,
+        190
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 4
+        },
+        {
+          "name": "start_image",
+          "type": "IMAGE",
+          "link": 5
+        },
+        {
+          "name": "end_image",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "links": [
+            9
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CogVideoImageEncode"
+      },
+      "widgets_values": [
+        false,
+        0.05,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "id": 8,
+      "type": "CogVideoSampler",
+      "pos": [
+        960,
+        60
+      ],
+      "size": [
+        330,
+        400
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "COGVIDEOMODEL",
+          "link": 6
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 7
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 8
+        },
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "image_cond_latents",
+          "type": "LATENT",
+          "link": 9
+        },
+        {
+          "name": "context_options",
+          "type": "COGCONTEXT",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "controlnet",
+          "type": "COGVIDECONTROLNET",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "tora_trajectory",
+          "type": "TORAFEATURES",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "fastercache",
+          "type": "FASTERCACHEARGS",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "feta_args",
+          "type": "FETAARGS",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "teacache_args",
+          "type": "TEACACHEARGS",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "links": [
+            11
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CogVideoSampler"
+      },
+      "widgets_values": [
+        49,
+        25,
+        6,
+        42,
+        "randomize",
+        "CogVideoXDDIM",
+        1
+      ],
+      "title": "✏️ CogVideo Sampler (steps / seed)",
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 9,
+      "type": "CogVideoDecode",
+      "pos": [
+        960,
+        500
+      ],
+      "size": [
+        330,
+        200
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 10
+        },
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 11,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [
+            12
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CogVideoDecode"
+      },
+      "widgets_values": [
+        true,
+        240,
+        360,
+        0.2,
+        0.2,
+        true
+      ]
+    },
+    {
+      "id": 11,
+      "type": "ImageCrop",
+      "pos": [
+        1340,
+        60
+      ],
+      "size": [
+        300,
+        130
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 12
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            14
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageCrop"
+      },
+      "widgets_values": [
+        720,
+        405,
+        0,
+        37
+      ],
+      "title": "Crop 16:9 (720x405)"
+    },
+    {
+      "id": 12,
+      "type": "UpscaleModelLoader",
+      "pos": [
+        1340,
+        230
+      ],
+      "size": [
+        300,
+        60
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "UPSCALE_MODEL",
+          "type": "UPSCALE_MODEL",
+          "links": [
+            13
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UpscaleModelLoader"
+      },
+      "widgets_values": [
+        "RealESRGAN_x2plus.pth"
+      ],
+      "title": "Load RealESRGAN x2"
+    },
+    {
+      "id": 13,
+      "type": "ImageUpscaleWithModel",
+      "pos": [
+        1340,
+        330
+      ],
+      "size": [
+        300,
+        50
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "upscale_model",
+          "type": "UPSCALE_MODEL",
+          "link": 13
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 14
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            15
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageUpscaleWithModel"
+      },
+      "widgets_values": [],
+      "title": "AI Upscale x2 (1440x810)"
+    },
+    {
+      "id": 14,
+      "type": "ImageScale",
+      "pos": [
+        1340,
+        420
+      ],
+      "size": [
+        300,
+        130
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 15
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            16
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageScale"
+      },
+      "widgets_values": [
+        "lanczos",
+        1920,
+        1080,
+        "disabled"
+      ],
+      "title": "Resize 1920x1080"
+    },
+    {
+      "id": 15,
+      "type": "RIFE VFI",
+      "pos": [
+        1340,
+        590
+      ],
+      "size": [
+        300,
+        300
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "frames",
+          "type": "IMAGE",
+          "link": 16
+        },
+        {
+          "name": "optional_interpolation_states",
+          "type": "INTERPOLATION_STATES",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            17
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "RIFE VFI"
+      },
+      "widgets_values": [
+        "rife49.pth",
+        10,
+        3,
+        true,
+        true,
+        1.0,
+        "float16",
+        false,
+        1
+      ],
+      "title": "Nội suy 8fps → 24fps (RIFE x3)"
+    },
+    {
+      "id": 10,
+      "type": "VHS_VideoCombine",
+      "pos": [
+        1690,
+        60
+      ],
+      "size": [
+        480,
+        620
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 17
+        },
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "meta_batch",
+          "type": "VHS_BatchManager",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Filenames",
+          "type": "VHS_FILENAMES",
+          "links": [],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VHS_VideoCombine"
+      },
+      "widgets_values": {
+        "frame_rate": 24,
+        "loop_count": 0,
+        "filename_prefix": "YouTube/CogVideoX-16x9",
+        "format": "video/h264-mp4",
+        "pix_fmt": "yuv420p",
+        "crf": 17,
+        "save_metadata": true,
+        "trim_to_audio": false,
+        "pingpong": false,
+        "save_output": true
+      },
+      "title": "Save YouTube MP4 (1080p24)"
+    },
+    {
+      "id": 16,
+      "type": "Note",
+      "pos": [
+        1690,
+        720
+      ],
+      "size": [
+        480,
+        560
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "Note"
+      },
+      "widgets_values": [
+        "CÁCH VIẾT PROMPT (tiếng Anh, 50–100 từ)\n\n1. NHÂN VẬT: tả đúng thứ có trong ảnh\n   (tuổi, tóc, quần áo, phong cách: realistic / 2D cartoon...)\n2. BỐI CẢNH: nơi chốn, ánh sáng\n3. HÀNH ĐỘNG: chuỗi cử động NHÌN THẤY ĐƯỢC\n   (smiles, blinks, nods, waves, hair blowing...)\n   Tránh hành động lớn: walking, running, turning around\n4. MÁY QUAY: static camera / slow push-in / slow pan left\n\nKHÔNG viết \"the person in the photo\".\n\nẢNH ĐẦU VÀO\n- Ảnh NGANG, tối thiểu 1280px (ảnh nhỏ → video mờ)\n- Chủ thể ở giữa: trên/dưới mỗi bên bị cắt ~8% khi ra 16:9\n- Ảnh PNG nền trong suốt: ghép lên nền trắng trước\n\nTHỬ NGHIỆM\n- Giữ steps=25, đổi seed để có chuyển động khác\n- Ưng rồi mới tăng steps=40–50 cho bản cuối\n- Nhiều chuyển động hơn: noise_aug_strength 0.05 → 0.1\n\nĐẦU RA: 1920×1080, 24fps, ~6s, MP4 H.264\n→ comfyui/output/YouTube/"
+      ],
+      "title": "📘 Hướng dẫn",
+      "color": "#432",
+      "bgcolor": "#653"
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      2,
+      0,
+      "CLIP"
+    ],
+    [
+      2,
+      2,
+      1,
+      3,
+      0,
+      "CLIP"
+    ],
+    [
+      3,
+      5,
+      0,
+      6,
+      0,
+      "IMAGE"
+    ],
+    [
+      4,
+      4,
+      1,
+      7,
+      0,
+      "VAE"
+    ],
+    [
+      5,
+      6,
+      0,
+      7,
+      1,
+      "IMAGE"
+    ],
+    [
+      6,
+      4,
+      0,
+      8,
+      0,
+      "COGVIDEOMODEL"
+    ],
+    [
+      7,
+      2,
+      0,
+      8,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      8,
+      3,
+      0,
+      8,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      9,
+      7,
+      0,
+      8,
+      4,
+      "LATENT"
+    ],
+    [
+      10,
+      4,
+      1,
+      9,
+      0,
+      "VAE"
+    ],
+    [
+      11,
+      8,
+      0,
+      9,
+      1,
+      "LATENT"
+    ],
+    [
+      12,
+      9,
+      0,
+      11,
+      0,
+      "IMAGE"
+    ],
+    [
+      13,
+      12,
+      0,
+      13,
+      0,
+      "UPSCALE_MODEL"
+    ],
+    [
+      14,
+      11,
+      0,
+      13,
+      1,
+      "IMAGE"
+    ],
+    [
+      15,
+      13,
+      0,
+      14,
+      0,
+      "IMAGE"
+    ],
+    [
+      16,
+      14,
+      0,
+      15,
+      0,
+      "IMAGE"
+    ],
+    [
+      17,
+      15,
+      0,
+      10,
+      0,
+      "IMAGE"
+    ]
+  ],
+  "groups": [
+    {
+      "title": "① Sinh video — CogVideoX-5B I2V (720x480, 8fps)",
+      "bounding": [
+        0,
+        -20,
+        1310,
+        950
+      ],
+      "color": "#3f789e",
+      "font_size": 22,
+      "flags": {}
+    },
+    {
+      "title": "② Hậu kỳ YouTube — 16:9, 1080p, 24fps",
+      "bounding": [
+        1320,
+        -20,
+        870,
+        1320
+      ],
+      "color": "#8A8",
+      "font_size": 22,
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.6,
+      "offset": [
+        40,
+        60
+      ]
+    }
+  },
+  "version": 0.4
+}

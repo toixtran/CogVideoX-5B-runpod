@@ -1,0 +1,4 @@
+# ComfyUI local (clone bằng scripts/install.sh): code bên thứ ba, .venv, models ~17GB, input/output.
+/comfyui/
+__pycache__/
+*.mp4

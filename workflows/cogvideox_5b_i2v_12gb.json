@@ -1,0 +1,672 @@
+{
+  "last_node_id": 10,
+  "last_link_id": 12,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "CLIPLoader",
+      "pos": [
+        20,
+        60
+      ],
+      "size": [
+        380,
+        106
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            1
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "t5xxl_fp8_e4m3fn.safetensors",
+        "sd3",
+        "default"
+      ],
+      "title": "Load T5 Text Encoder (fp8)"
+    },
+    {
+      "id": 2,
+      "type": "CogVideoTextEncode",
+      "pos": [
+        440,
+        60
+      ],
+      "size": [
+        460,
+        240
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "links": [
+            7
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "links": [
+            2
+          ],
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CogVideoTextEncode"
+      },
+      "widgets_values": [
+        "A majestic stag stands in a sunlit forest clearing, slowly turning its head toward the camera. Golden evening light filters through the trees, dust particles drift in the air, leaves sway gently in the breeze. Cinematic, smooth camera push-in, high detail, realistic motion.",
+        1,
+        false
+      ],
+      "title": "Positive Prompt"
+    },
+    {
+      "id": 3,
+      "type": "CogVideoTextEncode",
+      "pos": [
+        440,
+        340
+      ],
+      "size": [
+        460,
+        160
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "links": [
+            8
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "links": [],
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CogVideoTextEncode"
+      },
+      "widgets_values": [
+        "The video is not of a high quality, it has a low resolution. Watermark present in each frame. Strange motion trajectory. Blurry, distorted, flickering.",
+        1,
+        true
+      ],
+      "title": "Negative Prompt"
+    },
+    {
+      "id": 4,
+      "type": "DownloadAndLoadCogVideoModel",
+      "pos": [
+        20,
+        560
+      ],
+      "size": [
+        380,
+        230
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "block_edit",
+          "type": "TRANSFORMERBLOCKS",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "lora",
+          "type": "COGLORA",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "compile_args",
+          "type": "COMPILEARGS",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "model",
+          "type": "COGVIDEOMODEL",
+          "links": [
+            6
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "links": [
+            4,
+            10
+          ],
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "DownloadAndLoadCogVideoModel"
+      },
+      "widgets_values": [
+        "THUDM/CogVideoX-5b-I2V",
+        "bf16",
+        "fp8_e4m3fn",
+        false,
+        "sdpa",
+        "offload_device"
+      ],
+      "title": "Load CogVideoX-5B I2V (fp8)"
+    },
+    {
+      "id": 5,
+      "type": "LoadImage",
+      "pos": [
+        20,
+        220
+      ],
+      "size": [
+        380,
+        320
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            3
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [],
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "example.png",
+        "image"
+      ],
+      "title": "Input Image"
+    },
+    {
+      "id": 6,
+      "type": "ImageScale",
+      "pos": [
+        440,
+        560
+      ],
+      "size": [
+        320,
+        130
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            5
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageScale"
+      },
+      "widgets_values": [
+        "lanczos",
+        720,
+        480,
+        "center"
+      ],
+      "title": "Resize 720x480"
+    },
+    {
+      "id": 7,
+      "type": "CogVideoImageEncode",
+      "pos": [
+        440,
+        740
+      ],
+      "size": [
+        320,
+        190
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 4
+        },
+        {
+          "name": "start_image",
+          "type": "IMAGE",
+          "link": 5
+        },
+        {
+          "name": "end_image",
+          "type": "IMAGE",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "links": [
+            9
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CogVideoImageEncode"
+      },
+      "widgets_values": [
+        false,
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "id": 8,
+      "type": "CogVideoSampler",
+      "pos": [
+        960,
+        60
+      ],
+      "size": [
+        330,
+        400
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "COGVIDEOMODEL",
+          "link": 6
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 7
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 8
+        },
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": null
+        },
+        {
+          "name": "image_cond_latents",
+          "type": "LATENT",
+          "link": 9
+        },
+        {
+          "name": "context_options",
+          "type": "COGCONTEXT",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "controlnet",
+          "type": "COGVIDECONTROLNET",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "tora_trajectory",
+          "type": "TORAFEATURES",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "fastercache",
+          "type": "FASTERCACHEARGS",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "feta_args",
+          "type": "FETAARGS",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "teacache_args",
+          "type": "TEACACHEARGS",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "links": [
+            11
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CogVideoSampler"
+      },
+      "widgets_values": [
+        49,
+        25,
+        6,
+        42,
+        "fixed",
+        "CogVideoXDDIM",
+        1
+      ]
+    },
+    {
+      "id": 9,
+      "type": "CogVideoDecode",
+      "pos": [
+        960,
+        520
+      ],
+      "size": [
+        330,
+        200
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 10
+        },
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 11
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [
+            12
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CogVideoDecode"
+      },
+      "widgets_values": [
+        true,
+        240,
+        360,
+        0.2,
+        0.2,
+        true
+      ]
+    },
+    {
+      "id": 10,
+      "type": "VHS_VideoCombine",
+      "pos": [
+        1340,
+        60
+      ],
+      "size": [
+        420,
+        600
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 12
+        },
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "meta_batch",
+          "type": "VHS_BatchManager",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Filenames",
+          "type": "VHS_FILENAMES",
+          "links": [],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VHS_VideoCombine"
+      },
+      "widgets_values": {
+        "frame_rate": 8,
+        "loop_count": 0,
+        "filename_prefix": "CogVideoX-I2V",
+        "format": "video/h264-mp4",
+        "pix_fmt": "yuv420p",
+        "crf": 19,
+        "save_metadata": true,
+        "trim_to_audio": false,
+        "pingpong": false,
+        "save_output": true
+      },
+      "title": "Save Video (MP4)"
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      2,
+      0,
+      "CLIP"
+    ],
+    [
+      2,
+      2,
+      1,
+      3,
+      0,
+      "CLIP"
+    ],
+    [
+      3,
+      5,
+      0,
+      6,
+      0,
+      "IMAGE"
+    ],
+    [
+      4,
+      4,
+      1,
+      7,
+      0,
+      "VAE"
+    ],
+    [
+      5,
+      6,
+      0,
+      7,
+      1,
+      "IMAGE"
+    ],
+    [
+      6,
+      4,
+      0,
+      8,
+      0,
+      "COGVIDEOMODEL"
+    ],
+    [
+      7,
+      2,
+      0,
+      8,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      8,
+      3,
+      0,
+      8,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      9,
+      7,
+      0,
+      8,
+      4,
+      "LATENT"
+    ],
+    [
+      10,
+      4,
+      1,
+      9,
+      0,
+      "VAE"
+    ],
+    [
+      11,
+      8,
+      0,
+      9,
+      1,
+      "LATENT"
+    ],
+    [
+      12,
+      9,
+      0,
+      10,
+      0,
+      "IMAGE"
+    ]
+  ],
+  "groups": [
+    {
+      "title": "CogVideoX-5B Image-to-Video — tối ưu RTX 4070 Super 12GB",
+      "bounding": [
+        0,
+        -20,
+        1780,
+        980
+      ],
+      "color": "#3f789e",
+      "font_size": 22,
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.8,
+      "offset": [
+        40,
+        60
+      ]
+    }
+  },
+  "version": 0.4
+}

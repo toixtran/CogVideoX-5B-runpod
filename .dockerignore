@@ -1,0 +1,4 @@
+# Build context chỉ cần docker/ và nodes/ — tuyệt đối không gửi comfyui/ (models ~17GB).
+*
+!docker/
+!nodes/
