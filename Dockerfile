@@ -42,6 +42,6 @@ RUN mv /handler.py /worker_comfyui_handler.py
 COPY handler.py /handler.py
 
 # start.sh symlink cached model -> models/CogVideo/CogVideoX-5b-I2V rồi chạy /start.sh gốc.
-RUN mkdir -p /comfyui/models/CogVideo
-COPY --chmod=755 docker/start.sh /start-cogvideox.sh
+COPY docker/start.sh /start-cogvideox.sh
+RUN mkdir -p /comfyui/models/CogVideo && chmod 755 /start-cogvideox.sh
 CMD ["/start-cogvideox.sh"]
