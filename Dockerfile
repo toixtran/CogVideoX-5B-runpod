@@ -1,7 +1,7 @@
 # Worker RunPod Serverless: CogVideoX-5B I2V + hậu kỳ YouTube (RealESRGAN x2, RIFE 24fps).
 # CogVideoX (12GB) lấy từ RunPod Cached Models — ô "Model" của endpoint: THUDM/CogVideoX-5b-I2V.
 # Deploy: RunPod GitHub integration (Dockerfile ở gốc repo) hoặc ./docker/build.sh — xem docker/README.md.
-FROM runpod/worker-comfyui:5.10.0-base
+FROM runpod/worker-comfyui:5.10.0-base AS build
 
 # File lớn, ít đổi: để đầu cho build sau dùng lại cache.
 # T5 fp8 đóng vào image: Cached Models chỉ giữ 1 repo/endpoint, và T5 trong repo THUDM là
@@ -44,4 +44,20 @@ COPY handler.py /handler.py
 # start.sh symlink cached model -> models/CogVideo/CogVideoX-5b-I2V rồi chạy /start.sh gốc.
 COPY docker/start.sh /start-cogvideox.sh
 RUN mkdir -p /comfyui/models/CogVideo && chmod 755 /start-cogvideox.sh
+
+# /comfyui/.venv (8GB) của image gốc không được dùng (worker chạy /opt/venv); bỏ cả cache uv.
+RUN rm -rf /comfyui/.venv /root/.cache
+
+# Làm phẳng thành 1 lớp: các bước trên ghi đè file của image gốc nên Docker giữ cả bản cũ
+# lẫn mới (~50GB). Worker RunPod kẹt "initializing" khi kéo image cỡ đó.
+FROM scratch
+COPY --from=build / /
+ENV PATH=/opt/venv/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+    LD_LIBRARY_PATH=/usr/local/cuda/lib64 \
+    CUDA_VERSION=12.8.1 \
+    NVIDIA_REQUIRE_CUDA=cuda>=12.8 \
+    NVIDIA_VISIBLE_DEVICES=all \
+    NVIDIA_DRIVER_CAPABILITIES=compute,utility \
+    PYTHONUNBUFFERED=1
+ENTRYPOINT ["/opt/nvidia/nvidia_entrypoint.sh"]
 CMD ["/start-cogvideox.sh"]

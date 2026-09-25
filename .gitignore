@@ -2,3 +2,6 @@
 /comfyui/
 __pycache__/
 *.mp4
+runpod_key
+.runpod_key
+*.key

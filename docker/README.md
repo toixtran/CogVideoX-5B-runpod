@@ -24,7 +24,7 @@ Không cần Docker Hub: RunPod tự build `Dockerfile` ở gốc repo này.
 2. Đẩy code lên `main`, rồi tạo **GitHub Release** (vd. tag `v0.1.0`).
    RunPod chỉ build lại khi có **Release mới** — commit thường không cập nhật endpoint.
 3. Giới hạn build của RunPod: `docker build` ≤ 30 phút, cả quá trình ≤ 160 phút, image ≤ 80GB
-   (image này ~50GB chưa nén, phần lớn là image gốc worker-comfyui).
+   (image đã làm phẳng: ~12GB nén / ~19GB giải nén).
 
 Cách thay thế: build ở máy rồi đẩy registry — `./docker/build.sh --push`
 (→ `toitx/cogvideox-5b-runpod:<TAG>`; repo Private thì thêm Container Registry Auth trên RunPod).
@@ -38,9 +38,9 @@ RunPod → Serverless → New Endpoint → **Import Git Repository**:
 | Repository / Branch | `toixtran/CogVideoX-5B-runpod` / `main` |
 | Dockerfile path | `Dockerfile` |
 | **Model** (Cached Models) | `THUDM/CogVideoX-5b-I2V` |
-| GPU | 24GB (RTX 4090) |
-| Container disk | 30GB |
-| Min / Max workers | 0 / 3 (Min 1 nếu không muốn cold start, tính tiền 24/7) |
+| GPU (tối đa 3 nhóm, theo ưu tiên) | 1: **24 GB PRO** (RTX 4090); dự phòng 2: 48 GB PRO. Bỏ nhóm "24 GB" thường |
+| CUDA versions (Advanced) | 12.8 và mọi bản mới hơn (image dùng PyTorch cu128) |
+| Min / Max workers | 0 / 1 khi test (mỗi worker mới phải tải ~12GB image + ~21GB model); tăng khi có người dùng |
 | Execution timeout | ≥ 1200s |
 | FlashBoot | Bật |
 
