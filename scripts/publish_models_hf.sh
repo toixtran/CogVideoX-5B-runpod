@@ -60,7 +60,7 @@ cat > "$DIR/README.md" <<EOF
 ---
 license: other
 license_name: cogvideox-license
-license_link: licenses/CogVideoX-LICENSE
+license_link: https://huggingface.co/zai-org/CogVideoX-5b-I2V/blob/main/LICENSE
 ---
 # CogVideoX-5B I2V — model cho ComfyUI worker RunPod
 
@@ -79,7 +79,7 @@ echo "upload $DIR -> $HF_REPO (private=$PRIVATE)"
 # venv riêng (ngoài thư mục upload): python hệ thống (vd. Homebrew) thường chặn pip install.
 VENV="$DIR/../.hf-venv"
 [ -x "$VENV/bin/python" ] || python3 -m venv "$VENV"
-"$VENV/bin/python" -m pip install -q -U "huggingface_hub[hf_xet]"
+"$VENV/bin/python" -m pip install -q -U "huggingface_hub[hf_xet]>=2.0"
 HF_REPO="$HF_REPO" PRIVATE="$PRIVATE" DIR="$DIR" "$VENV/bin/python" - <<'EOF'
 import os
 from huggingface_hub import HfApi
@@ -87,8 +87,9 @@ from huggingface_hub import HfApi
 api = HfApi()
 repo, folder = os.environ["HF_REPO"], os.environ["DIR"]
 api.create_repo(repo, repo_type="model", private=os.environ["PRIVATE"] == "true", exist_ok=True)
-# upload_large_folder: chia nhỏ, chạy song song, bị ngắt thì chạy lại script là upload tiếp.
-api.upload_large_folder(repo_id=repo, folder_path=folder, repo_type="model",
-                        ignore_patterns=["**/*.part", ".cache/**"])
+# huggingface_hub 2.0 bỏ upload_large_folder: upload_folder tự chia nhiều commit với thư mục
+# lớn, bị ngắt thì chạy lại script là upload tiếp (file đã commit được bỏ qua).
+api.upload_folder(repo_id=repo, folder_path=folder, repo_type="model",
+                  ignore_patterns=["**/*.part", ".cache/**"])
 print(f"xong: https://huggingface.co/{repo}")
 EOF

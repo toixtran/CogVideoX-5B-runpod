@@ -8,3 +8,5 @@ runpod_key
 # scripts/publish_models_hf.sh: model tải về (~17GB) và venv upload.
 /hf-models/
 /.hf-venv/
+hf_token
+.hf_token
