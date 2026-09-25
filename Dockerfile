@@ -9,12 +9,9 @@ FROM runpod/worker-comfyui:5.10.0-base
 # /comfyui/.venv (có sẵn trong image gốc nhưng không dùng).
 ENV UV_PYTHON=/opt/venv/bin/python
 
-# Cùng commit ComfyUI đã chạy ổn ở local (0.37.0), thay cho 0.34.0 của image gốc.
-ARG COMFYUI_COMMIT=912fca4f39b875a0360f2c5170568176ea813ded
-RUN cd /comfyui \
- && git fetch --depth 1 origin ${COMFYUI_COMMIT} \
- && git checkout --force FETCH_HEAD \
- && uv pip install --python $UV_PYTHON -r requirements.txt
+# THỬ (nhánh bisect): bỏ bước cập nhật ComfyUI 0.34 -> 0.37 để xem nó có làm build RunPod
+# fail không. v1.0.1 (chỉ FROM + thay handler) build được; v1.0.4 (thêm bước này + custom
+# nodes + copy) fail. Không dùng nhánh này cho production.
 
 # Custom nodes, ghim commit.
 ARG COGVIDEOX_WRAPPER_COMMIT=fdb8abd2790b5459ddc7066c31861bb0b62e988b
