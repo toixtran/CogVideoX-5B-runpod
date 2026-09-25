@@ -13,6 +13,17 @@
       "12.9",
       "12.8"
     ],
-    "env": []
+    "env": [
+      {
+        "key": "MODEL_REPO",
+        "input": {
+          "type": "huggingface",
+          "name": "Model repo (Cached Model)",
+          "description": "Repo HF gom mọi model (tạo bằng scripts/publish_models_hf.sh). Điền cùng repo vào ô Model của endpoint để RunPod cache sẵn.",
+          "default": "toixtran/cogvideox-5b-i2v-comfy",
+          "required": true
+        }
+      }
+    ]
   }
 }

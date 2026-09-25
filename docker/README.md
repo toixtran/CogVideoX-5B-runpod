@@ -3,18 +3,33 @@
 Cập nhật theo `runpod-workers/worker-comfyui` 5.10 (09/2026). Khác tài liệu gốc:
 
 - Image `:latest` không có custom node → tự build từ `Dockerfile` (gốc repo).
-- Model: **đóng hết vào image** (CogVideoX, T5, RealESRGAN, RIFE) — cold start không tải gì,
-  không cần Cached Models hay Network Volume, không khoá datacenter.
+- Model: gom hết (CogVideoX, T5, RealESRGAN, RIFE) vào **1 repo Hugging Face** rồi dùng làm
+  **Cached Model** của endpoint — cold start không tải gì, không tính tiền thời gian tải, không khoá
+  datacenter. Image chỉ có phần mềm (build RunPod Hub fail không log khi có ~17GB model trong image).
 - Worker chỉ trả output key `images` → workflow cloud dùng `SaveVideo` (không dùng VHS).
 - Ảnh đầu vào gửi **base64** (worker không nhận URL); video trả về dạng **base64** (không dùng S3).
 
 ```
-Image (RunPod build từ GitHub)
-├─ ComfyUI 0.37 (cùng commit với local)
-├─ CogVideoXWrapper, Frame-Interpolation
-├─ CogVideoX-5b-I2V: transformer + vae + scheduler (~12GB, ghim commit HF)
-└─ T5 fp8 (~5GB), RealESRGAN x2, RIFE 4.9
+RunPod Cached Model (ô "Model")                    Image (RunPod build từ GitHub)
+toixtran/cogvideox-5b-i2v-comfy (~17GB) ─────┐     ├─ ComfyUI 0.37 (cùng commit với local)
+├─ CogVideoX-5b-I2V/ transformer, vae, sched │     ├─ CogVideoXWrapper, Frame-Interpolation
+├─ text_encoders/t5xxl_fp8_e4m3fn            │     └─ start.sh: symlink từ cache vào ComfyUI
+├─ upscale_models/RealESRGAN_x2plus          └────────►
+└─ rife/rife49
 ```
+
+## 0. Đưa model lên Hugging Face (làm 1 lần)
+
+```bash
+export HF_TOKEN=hf_...                  # token quyền write: https://huggingface.co/settings/tokens
+./scripts/publish_models_hf.sh          # -> toixtran/cogvideox-5b-i2v-comfy (private)
+# HF_REPO=<user>/<tên> PRIVATE=false ./scripts/publish_models_hf.sh   # đổi tên / để public
+```
+
+Script tải ~17GB vào `hf-models/` (tải tiếp nếu bị ngắt), thêm README + LICENSE gốc của từng model,
+rồi upload (chạy lại là upload tiếp). Mạng nhà chậm thì chạy trên một **Pod** RunPod rẻ (CPU là đủ,
+disk ≥ 40GB): `git clone https://github.com/toixtran/CogVideoX-5B-runpod && cd CogVideoX-5B-runpod`
+rồi chạy 2 lệnh trên. Đổi tên repo thì đặt thêm biến `MODEL_REPO=<user>/<tên>` cho endpoint.
 
 ## 1. Image: RunPod build từ GitHub
 
@@ -24,7 +39,7 @@ Không cần Docker Hub: RunPod tự build `Dockerfile` ở gốc repo này.
 2. Đẩy code lên `main`, rồi tạo **GitHub Release** (vd. tag `v0.1.0`).
    RunPod chỉ build lại khi có **Release mới** — commit thường không cập nhật endpoint.
 3. Giới hạn build của RunPod: `docker build` ≤ 30 phút, cả quá trình ≤ 160 phút, image ≤ 80GB
-   (image đã làm phẳng, kèm model: ~31GB giải nén).
+   (image chỉ có phần mềm, không kèm model).
 
 Muốn đưa lên **RunPod Hub**: Hub đọc `.runpod/hub.json` (GPU, CUDA) và chạy
 `.runpod/tests.json` (workflow cloud, 10 steps, ảnh PNG nhỏ base64) sau mỗi Release.
@@ -40,16 +55,18 @@ RunPod → Serverless → New Endpoint → **Import Git Repository**:
 |---|---|
 | Repository / Branch | `toixtran/CogVideoX-5B-runpod` / `main` |
 | Dockerfile path | `Dockerfile` |
+| **Model** (Cached Models) | `toixtran/cogvideox-5b-i2v-comfy` — repo private thì điền thêm HF token (quyền read) |
 | GPU (tối đa 3 nhóm, theo ưu tiên) | 1: **24 GB PRO** (RTX 4090) — rẻ nhất tính theo mỗi video vì model vừa 24GB; dự phòng 2: 48 GB PRO (chỉ khi hết 4090). Bỏ nhóm "24 GB" thường |
 | CUDA versions (Advanced) | 12.8 và mọi bản mới hơn (image dùng PyTorch cu128) |
-| Min / Max workers | 0 / 1 khi test (mỗi worker mới phải kéo image ~31GB); tăng khi có người dùng |
+| Min / Max workers | 0 / 1 khi test (mỗi worker mới phải kéo image); tăng khi có người dùng |
 | Execution timeout | ≥ 1200s |
 | FlashBoot | Bật |
 
 Không đặt biến `BUCKET_*`: worker trả video MP4 dạng base64 trong `output.images[].data`.
 
-Deploy → lấy **Endpoint ID**; API key ở Settings → API Keys. Để trống ô **Model** (Cached Models):
-model đã có sẵn trong image.
+Deploy → lấy **Endpoint ID**; API key ở Settings → API Keys. Log worker phải có dòng
+`cogvideox-5b-runpod: model từ cached model ...`; thấy `ERROR không thấy cached model` thì ô Model
+chưa đúng hoặc thiếu HF token (repo private).
 
 ## 3. Gửi thử
 
@@ -69,7 +86,7 @@ RUNPOD_API_KEY=... python3 scripts/runpod_client.py --endpoint-id <ID> \
 
 ```bash
 pkill -f "python main.py"        # tắt ComfyUI local (không đủ GPU/RAM cho hai bản)
-./docker/test_local.sh           # giả lập worker ở http://localhost:8000
+./docker/test_local.sh           # giả lập worker + Cached Model (mount hf-models/) ở http://localhost:8000
 python3 scripts/runpod_client.py --url http://localhost:8000 \
   --workflow workflows/api/cogvideox_youtube_16x9_local.json --image anh.jpg --prompt "..."
 docker rm -f cogvideox-worker
