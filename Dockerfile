@@ -1,11 +1,24 @@
 # Worker RunPod Serverless: CogVideoX-5B I2V + hậu kỳ YouTube (RealESRGAN x2, RIFE 24fps).
-# CogVideoX (12GB) lấy từ RunPod Cached Models — ô "Model" của endpoint: THUDM/CogVideoX-5b-I2V.
+# Mọi model đóng sẵn vào image: cold start không tải gì, không cần Cached Models / Network Volume.
 # Deploy: RunPod GitHub integration (Dockerfile ở gốc repo) hoặc ./docker/build.sh — xem docker/README.md.
 FROM runpod/worker-comfyui:5.10.0-base AS build
 
 # File lớn, ít đổi: để đầu cho build sau dùng lại cache.
-# T5 fp8 đóng vào image: Cached Models chỉ giữ 1 repo/endpoint, và T5 trong repo THUDM là
-# dạng HF nhiều file mà CLIPLoader của ComfyUI không đọc được.
+# CogVideoX-5B-I2V (~12GB): chỉ transformer, vae, scheduler — đúng phần CogVideoXWrapper đọc từ
+# models/CogVideo/CogVideoX-5b-I2V (text encoder dùng T5 fp8 bên dưới). Ghim commit repo HF.
+ARG COGVIDEOX_REPO=https://huggingface.co/zai-org/CogVideoX-5b-I2V/resolve/a6f0f4858a8395e7429d82493864ce92bf73af11
+ARG COGVIDEOX_DIR=/comfyui/models/CogVideo/CogVideoX-5b-I2V
+ADD ${COGVIDEOX_REPO}/transformer/diffusion_pytorch_model-00001-of-00003.safetensors ${COGVIDEOX_DIR}/transformer/
+ADD ${COGVIDEOX_REPO}/transformer/diffusion_pytorch_model-00002-of-00003.safetensors ${COGVIDEOX_DIR}/transformer/
+ADD ${COGVIDEOX_REPO}/transformer/diffusion_pytorch_model-00003-of-00003.safetensors ${COGVIDEOX_DIR}/transformer/
+ADD ${COGVIDEOX_REPO}/transformer/diffusion_pytorch_model.safetensors.index.json ${COGVIDEOX_DIR}/transformer/
+ADD ${COGVIDEOX_REPO}/transformer/config.json ${COGVIDEOX_DIR}/transformer/
+ADD ${COGVIDEOX_REPO}/vae/diffusion_pytorch_model.safetensors ${COGVIDEOX_DIR}/vae/
+ADD ${COGVIDEOX_REPO}/vae/config.json ${COGVIDEOX_DIR}/vae/
+ADD ${COGVIDEOX_REPO}/scheduler/scheduler_config.json ${COGVIDEOX_DIR}/scheduler/
+
+# T5 fp8 thay cho text_encoder của repo CogVideoX: bản đó là dạng HF nhiều file mà CLIPLoader
+# của ComfyUI không đọc được.
 ADD https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp8_e4m3fn.safetensors \
     /comfyui/models/text_encoders/t5xxl_fp8_e4m3fn.safetensors
 ADD https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.1/RealESRGAN_x2plus.pth \
@@ -41,10 +54,6 @@ COPY nodes/free_memory_after_run.py /comfyui/custom_nodes/free_memory_after_run.
 RUN mv /handler.py /worker_comfyui_handler.py
 COPY handler.py /handler.py
 
-# start.sh symlink cached model -> models/CogVideo/CogVideoX-5b-I2V rồi chạy /start.sh gốc.
-COPY docker/start.sh /start-cogvideox.sh
-RUN mkdir -p /comfyui/models/CogVideo && chmod 755 /start-cogvideox.sh
-
 # /comfyui/.venv (8GB) của image gốc không được dùng (worker chạy /opt/venv); bỏ cả cache uv.
 RUN rm -rf /comfyui/.venv /root/.cache
 
@@ -60,4 +69,4 @@ ENV PATH=/opt/venv/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/s
     NVIDIA_DRIVER_CAPABILITIES=compute,utility \
     PYTHONUNBUFFERED=1
 ENTRYPOINT ["/opt/nvidia/nvidia_entrypoint.sh"]
-CMD ["/start-cogvideox.sh"]
+CMD ["/start.sh"]

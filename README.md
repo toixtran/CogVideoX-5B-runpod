@@ -7,7 +7,7 @@ local (RTX 4070 Super 12GB), chạy production trên **RunPod Serverless** (GPU 
 
 ```
 [Local R&D: ComfyUI]  ── Export (API) ──►  [workflows/api/*.json]  ──►  [RunPod Serverless]
- sửa node, prompt, tham số                  make_cloud_workflow.py       Dockerfile + Cached Model
+ sửa node, prompt, tham số                  make_cloud_workflow.py       Dockerfile (model trong image)
                                                                           ▲
                                                    backend / scripts/runpod_client.py (prompt + ảnh)
 ```
@@ -33,7 +33,7 @@ local (RTX 4070 Super 12GB), chạy production trên **RunPod Serverless** (GPU 
 ├── Dockerfile                  # image worker RunPod (RunPod build từ GitHub)
 ├── handler.py                  # entrypoint RunPod: dùng lại handler của worker-comfyui
 ├── .runpod/                    # hub.json (cấu hình RunPod Hub), tests.json (test Hub chạy khi publish)
-└── docker/                     # start.sh, build/test local — xem docker/README.md
+└── docker/                     # build/test local — xem docker/README.md
 ```
 
 ## Chạy local
@@ -86,10 +86,9 @@ hướng dẫn viết prompt.
 ## Đưa lên RunPod
 
 **RunPod Hub**: repo có sẵn `.runpod/hub.json` và `.runpod/tests.json`. Vào RunPod → Hub → Add your repo,
-chọn repo này, rồi tạo **GitHub Release** để Hub build và chạy test (test tự tải model ~21GB nên lần đầu lâu).
+chọn repo này, rồi tạo **GitHub Release** để Hub build và chạy test (image ~31GB kèm model nên build lâu).
 
-Tạo endpoint thủ công: xem [docker/README.md](docker/README.md): tạo endpoint từ GitHub repo này (Release để build), Cached Model
-`THUDM/CogVideoX-5b-I2V`, gửi thử bằng `scripts/runpod_client.py`.
+Tạo endpoint thủ công: xem [docker/README.md](docker/README.md): tạo endpoint từ GitHub repo này (Release để build), gửi thử bằng `scripts/runpod_client.py`.
 
 Đổi workflow không cần build lại image: sửa trong ComfyUI → **Export (API)** (menu C → File) →
 `python3 scripts/make_cloud_workflow.py <file>.json workflows/api/cogvideox_youtube_16x9_cloud.json`.
