@@ -120,7 +120,7 @@
         0
       ],
       "num_frames": 49,
-      "steps": 25,
+      "steps": 20,
       "cfg": 6,
       "seed": 42,
       "scheduler": "CogVideoXDDIM",
@@ -220,7 +220,7 @@
       "clear_cache_after_n_frames": 10,
       "multiplier": 3,
       "fast_mode": true,
-      "ensemble": true,
+      "ensemble": false,
       "scale_factor": 1.0,
       "dtype": "float16",
       "torch_compile": false,

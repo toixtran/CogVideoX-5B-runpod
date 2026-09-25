@@ -1,5 +1,7 @@
 # CogVideoX-5B-runpod
 
+[![Runpod](https://api.runpod.io/badge/toixtran/CogVideoX-5B-runpod)](https://console.runpod.io/hub/toixtran/CogVideoX-5B-runpod)
+
 Tạo video từ ảnh + prompt bằng **CogVideoX-5B Image-to-Video** trên ComfyUI: làm workflow ở máy
 local (RTX 4070 Super 12GB), chạy production trên **RunPod Serverless** (GPU 24GB).
 
@@ -30,6 +32,7 @@ local (RTX 4070 Super 12GB), chạy production trên **RunPod Serverless** (GPU 
 ├── nodes/free_memory_after_run.py  # giải phóng VRAM sau mỗi job
 ├── Dockerfile                  # image worker RunPod (RunPod build từ GitHub)
 ├── handler.py                  # entrypoint RunPod: dùng lại handler của worker-comfyui
+├── .runpod/                    # hub.json (cấu hình RunPod Hub), tests.json (test Hub chạy khi publish)
 └── docker/                     # start.sh, build/test local — xem docker/README.md
 ```
 
@@ -58,7 +61,8 @@ hướng dẫn viết prompt.
 |---|---|---|---|
 | Load CogVideoX | `quantization` | `fp8_e4m3fn` | Bắt buộc với 12GB |
 | Load CogVideoX | `load_device` | `offload_device` | Bắt buộc với 12GB: wrapper đưa model bf16 (~11GB) lên GPU *trước* khi ép fp8 |
-| Sampler | `steps` | 25 | 20–30 để thử; 40–50 cho bản cuối |
+| Sampler | `steps` | 20 | 20–30 để thử; tăng 25–30 nếu thiếu chi tiết (mỗi step thêm ~5% thời gian GPU) |
+| RIFE VFI | `ensemble` | `false` | Nhanh hơn; `true` nội suy mượt hơn chút nhưng chậm hơn |
 | Sampler | `cfg` | 6.0 | 5–7 |
 | Sampler | `seed` | `randomize` | Đổi seed = đổi chuyển động; ưng thì chuyển `fixed` |
 | Sampler | `num_frames` | 49 | CogVideoX 1.0 train ở 49 khung — không tăng |
@@ -81,7 +85,10 @@ hướng dẫn viết prompt.
 
 ## Đưa lên RunPod
 
-Xem [docker/README.md](docker/README.md): tạo endpoint từ GitHub repo này (Release để build), Cached Model
+**RunPod Hub**: repo có sẵn `.runpod/hub.json` và `.runpod/tests.json`. Vào RunPod → Hub → Add your repo,
+chọn repo này, rồi tạo **GitHub Release** để Hub build và chạy test (test tự tải model ~21GB nên lần đầu lâu).
+
+Tạo endpoint thủ công: xem [docker/README.md](docker/README.md): tạo endpoint từ GitHub repo này (Release để build), Cached Model
 `THUDM/CogVideoX-5b-I2V`, gửi thử bằng `scripts/runpod_client.py`.
 
 Đổi workflow không cần build lại image: sửa trong ComfyUI → **Export (API)** (menu C → File) →

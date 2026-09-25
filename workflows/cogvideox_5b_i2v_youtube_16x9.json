@@ -431,7 +431,7 @@
       },
       "widgets_values": [
         49,
-        25,
+        20,
         6,
         42,
         "randomize",
@@ -695,7 +695,7 @@
         10,
         3,
         true,
-        true,
+        false,
         1.0,
         "float16",
         false,
@@ -787,7 +787,7 @@
         "Node name for S&R": "Note"
       },
       "widgets_values": [
-        "CÁCH VIẾT PROMPT (tiếng Anh, 50–100 từ)\n\n1. NHÂN VẬT: tả đúng thứ có trong ảnh\n   (tuổi, tóc, quần áo, phong cách: realistic / 2D cartoon...)\n2. BỐI CẢNH: nơi chốn, ánh sáng\n3. HÀNH ĐỘNG: chuỗi cử động NHÌN THẤY ĐƯỢC\n   (smiles, blinks, nods, waves, hair blowing...)\n   Tránh hành động lớn: walking, running, turning around\n4. MÁY QUAY: static camera / slow push-in / slow pan left\n\nKHÔNG viết \"the person in the photo\".\n\nẢNH ĐẦU VÀO\n- Ảnh NGANG, tối thiểu 1280px (ảnh nhỏ → video mờ)\n- Chủ thể ở giữa: trên/dưới mỗi bên bị cắt ~8% khi ra 16:9\n- Ảnh PNG nền trong suốt: ghép lên nền trắng trước\n\nTHỬ NGHIỆM\n- Giữ steps=25, đổi seed để có chuyển động khác\n- Ưng rồi mới tăng steps=40–50 cho bản cuối\n- Nhiều chuyển động hơn: noise_aug_strength 0.05 → 0.1\n\nĐẦU RA: 1920×1080, 24fps, ~6s, MP4 H.264\n→ comfyui/output/YouTube/"
+        "CÁCH VIẾT PROMPT (tiếng Anh, 50–100 từ)\n\n1. NHÂN VẬT: tả đúng thứ có trong ảnh\n   (tuổi, tóc, quần áo, phong cách: realistic / 2D cartoon...)\n2. BỐI CẢNH: nơi chốn, ánh sáng\n3. HÀNH ĐỘNG: chuỗi cử động NHÌN THẤY ĐƯỢC\n   (smiles, blinks, nods, waves, hair blowing...)\n   Tránh hành động lớn: walking, running, turning around\n4. MÁY QUAY: static camera / slow push-in / slow pan left\n\nKHÔNG viết \"the person in the photo\".\n\nẢNH ĐẦU VÀO\n- Ảnh NGANG, tối thiểu 1280px (ảnh nhỏ → video mờ)\n- Chủ thể ở giữa: trên/dưới mỗi bên bị cắt ~8% khi ra 16:9\n- Ảnh PNG nền trong suốt: ghép lên nền trắng trước\n\nTHỬ NGHIỆM\n- Giữ steps=20, đổi seed để có chuyển động khác\n- Ưng rồi mới tăng steps=25–30 nếu thiếu chi tiết\n- Nhiều chuyển động hơn: noise_aug_strength 0.05 → 0.1\n\nĐẦU RA: 1920×1080, 24fps, ~6s, MP4 H.264\n→ comfyui/output/YouTube/"
       ],
       "title": "📘 Hướng dẫn",
       "color": "#432",

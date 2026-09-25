@@ -6,7 +6,7 @@ Cập nhật theo `runpod-workers/worker-comfyui` 5.10 và RunPod Cached Models 
 - Model: dùng **Cached Models** (ô "Model" của endpoint) thay cho Network Volume — không khoá
   datacenter, không tốn phí lưu trữ, không tính tiền thời gian tải model, không cần Pod nạp model.
 - Worker chỉ trả output key `images` → workflow cloud dùng `SaveVideo` (không dùng VHS).
-- Ảnh đầu vào gửi **base64** (worker không nhận URL); biến S3 là `BUCKET_*`, không phải `AWS_*`.
+- Ảnh đầu vào gửi **base64** (worker không nhận URL); video trả về dạng **base64** (không dùng S3).
 
 ```
 RunPod Cached Models                     Image (RunPod build từ GitHub)
@@ -26,6 +26,10 @@ Không cần Docker Hub: RunPod tự build `Dockerfile` ở gốc repo này.
 3. Giới hạn build của RunPod: `docker build` ≤ 30 phút, cả quá trình ≤ 160 phút, image ≤ 80GB
    (image đã làm phẳng: ~12GB nén / ~19GB giải nén).
 
+Muốn đưa lên **RunPod Hub**: Hub đọc `.runpod/hub.json` (GPU, CUDA) và chạy
+`.runpod/tests.json` (workflow cloud, 10 steps, ảnh PNG nhỏ base64) sau mỗi Release. Test không có
+Cached Model nên worker tự tải CogVideoX (~12GB) — timeout test đặt 30 phút.
+
 Cách thay thế: build ở máy rồi đẩy registry — `./docker/build.sh --push`
 (→ `toitx/cogvideox-5b-runpod:<TAG>`; repo Private thì thêm Container Registry Auth trên RunPod).
 
@@ -38,19 +42,13 @@ RunPod → Serverless → New Endpoint → **Import Git Repository**:
 | Repository / Branch | `toixtran/CogVideoX-5B-runpod` / `main` |
 | Dockerfile path | `Dockerfile` |
 | **Model** (Cached Models) | `THUDM/CogVideoX-5b-I2V` |
-| GPU (tối đa 3 nhóm, theo ưu tiên) | 1: **24 GB PRO** (RTX 4090); dự phòng 2: 48 GB PRO. Bỏ nhóm "24 GB" thường |
+| GPU (tối đa 3 nhóm, theo ưu tiên) | 1: **24 GB PRO** (RTX 4090) — rẻ nhất tính theo mỗi video vì model vừa 24GB; dự phòng 2: 48 GB PRO (chỉ khi hết 4090). Bỏ nhóm "24 GB" thường |
 | CUDA versions (Advanced) | 12.8 và mọi bản mới hơn (image dùng PyTorch cu128) |
 | Min / Max workers | 0 / 1 khi test (mỗi worker mới phải tải ~12GB image + ~21GB model); tăng khi có người dùng |
 | Execution timeout | ≥ 1200s |
 | FlashBoot | Bật |
 
-Environment variables (Cloudflare R2; bỏ trống thì video trả về dạng base64):
-
-```
-BUCKET_ENDPOINT_URL=https://<account_id>.r2.cloudflarestorage.com/<bucket>
-BUCKET_ACCESS_KEY_ID=...
-BUCKET_SECRET_ACCESS_KEY=...
-```
+Không đặt biến `BUCKET_*`: worker trả video MP4 dạng base64 trong `output.images[].data`.
 
 Deploy → lấy **Endpoint ID**; API key ở Settings → API Keys. Log worker phải có dòng
 `cogvideox-5b-runpod: CogVideoX từ cached model ...`; nếu thấy `WARNING không thấy cached model`

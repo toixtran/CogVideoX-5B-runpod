@@ -1,0 +1,18 @@
+{
+  "title": "CogVideoX-5B I2V (YouTube 1080p)",
+  "description": "Serverless ComfyUI worker for CogVideoX-5B image-to-video with YouTube post-processing: RealESRGAN x2 upscale to 1920x1080 and RIFE interpolation to 24fps MP4.",
+  "type": "serverless",
+  "category": "video",
+  "iconUrl": "https://cdn-avatars.huggingface.co/v1/production/uploads/63033dc4e1e7f0e03a5e1a31/0BibmRdezvN6v6d2CEtd5.png",
+  "config": {
+    "runsOn": "GPU",
+    "containerDiskInGb": 60,
+    "gpuCount": 1,
+    "gpuIds": "ADA_24,ADA_48_PRO",
+    "allowedCudaVersions": [
+      "12.9",
+      "12.8"
+    ],
+    "env": []
+  }
+}

@@ -74,8 +74,5 @@ while True:
 if status["status"] != "COMPLETED":
     sys.exit(json.dumps(status, indent=2, ensure_ascii=False)[:3000])
 for item in status["output"]["images"]:
-    if item["type"] == "s3_url":
-        print("video:", item["data"])
-    else:
-        Path(args.out).write_bytes(base64.b64decode(item["data"]))
-        print("video:", args.out)
+    Path(args.out).write_bytes(base64.b64decode(item["data"]))
+    print("video:", args.out)
