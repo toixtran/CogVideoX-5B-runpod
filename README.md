@@ -102,6 +102,9 @@ Model thứ hai, chạy native trong ComfyUI 0.37 (không cần custom node). Fi
   `workflows/api/minimax_h3_i2v_turbo.json` — 864×576 (đúng tỉ lệ 3:2 của ảnh; H3 kéo giãn ảnh theo width/height nên phải khớp tỉ lệ), 5s (124 frame), turbo LoRA 6 bước, seed 42.
 - VAE video dùng bản **fp16** thay cho `int8_convrot` của template: bản int8 gọi kernel `comfy_kitchen`
   build cho CUDA 13 → lỗi `CUDA driver version is insufficient` với driver 570 (CUDA 12.8).
+- GGUF Q4_K (unsloth `minimax_h3_fl2va_pruned-Q4_K.gguf`, 11.4GB) + node `UnetLoaderGGUFDynamicVRAM`
+  (fork molbal/ComfyUI-GGUF): **166s** so với 229s của int8 trên 4070 Super, chất lượng gần như y hệt
+  (SSIM 0.93) — workflow `workflows/api/minimax_h3_i2v_turbo_q4k_dynamic.json`.
 - Cần RAM lớn: ComfyUI dùng ~38GB RAM, VRAM ~11.6GB. RTX 4070 Super (RAM 64GB): **227s**/video
   (sampling 32 s/bước).
 - **License** (MiniMax H3 Community): không dùng tại Mỹ, EU, Anh, Hàn Quốc (kể cả hosted);

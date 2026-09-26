@@ -12,7 +12,9 @@ clone https://github.com/comfyanonymous/ComfyUI.git "$COMFY"
 clone https://github.com/Comfy-Org/ComfyUI-Manager.git         "$COMFY/custom_nodes/comfyui-manager"
 clone https://github.com/kijai/ComfyUI-CogVideoXWrapper.git     "$COMFY/custom_nodes/ComfyUI-CogVideoXWrapper"
 clone https://github.com/kijai/ComfyUI-HunyuanVideoWrapper.git  "$COMFY/custom_nodes/ComfyUI-HunyuanVideoWrapper"
-clone https://github.com/city96/ComfyUI-GGUF.git                "$COMFY/custom_nodes/ComfyUI-GGUF"
+# Fork molbal: bản city96 ngừng từ 01/2026, không đọc được GGUF MiniMax-H3. Ghim commit đã test.
+clone https://github.com/molbal/ComfyUI-GGUF.git                "$COMFY/custom_nodes/ComfyUI-GGUF"
+git -C "$COMFY/custom_nodes/ComfyUI-GGUF" checkout -q 48de657
 clone https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git "$COMFY/custom_nodes/ComfyUI-VideoHelperSuite"
 clone https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git "$COMFY/custom_nodes/ComfyUI-Frame-Interpolation"
 
