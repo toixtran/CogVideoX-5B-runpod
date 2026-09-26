@@ -99,11 +99,11 @@ Model thứ hai, chạy native trong ComfyUI 0.37 (không cần custom node). Fi
 | loras | `minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16` |
 
 - UI: `workflows/minimax_h3_i2v_official.json` (template chính thức). API/benchmark:
-  `workflows/api/minimax_h3_i2v_turbo.json` — 864×480, 5s (124 frame), turbo LoRA 6 bước, seed 42.
+  `workflows/api/minimax_h3_i2v_turbo.json` — 864×576 (đúng tỉ lệ 3:2 của ảnh; H3 kéo giãn ảnh theo width/height nên phải khớp tỉ lệ), 5s (124 frame), turbo LoRA 6 bước, seed 42.
 - VAE video dùng bản **fp16** thay cho `int8_convrot` của template: bản int8 gọi kernel `comfy_kitchen`
   build cho CUDA 13 → lỗi `CUDA driver version is insufficient` với driver 570 (CUDA 12.8).
-- Cần RAM lớn: ComfyUI dùng ~38GB RAM, VRAM ~11.6GB. RTX 4070 Super (RAM 64GB): **182s**/video
-  (sampling 24.5 s/bước).
+- Cần RAM lớn: ComfyUI dùng ~38GB RAM, VRAM ~11.6GB. RTX 4070 Super (RAM 64GB): **227s**/video
+  (sampling 32 s/bước).
 - **License** (MiniMax H3 Community): không dùng tại Mỹ, EU, Anh, Hàn Quốc (kể cả hosted);
   sản phẩm thương mại phải hiển thị "MiniMax H3". Trên RunPod chỉ chọn data center ngoài các vùng đó.
 
