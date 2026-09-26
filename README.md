@@ -77,12 +77,35 @@ hướng dẫn viết prompt.
 ### Vì sao `run_comfyui.sh` khác tài liệu gốc
 
 - Không `--highvram`: ở ComfyUI hiện tại cờ này tắt dynamic VRAM và ép giữ mọi model trên GPU → OOM.
-- `--disable-pinned-memory --cache-none`: máy 31GB RAM; mặc định ComfyUI ghim tới ~24GB RAM,
-  cộng CogVideoXWrapper load model ngoài tầm quản lý → Linux OOM-kill ComfyUI ("Failed to fetch").
+- `--disable-pinned-memory --cache-none` chỉ bật khi RAM < 48GB: máy 31GB bị Linux OOM-kill ComfyUI
+  ("Failed to fetch") vì ComfyUI ghim tới ~75% RAM cộng CogVideoXWrapper load model ngoài tầm quản lý.
+  Từ 48GB giữ pinned memory để model lớn hơn VRAM (MiniMax-H3) chuyển RAM → GPU nhanh.
 - Không live preview: CogVideoXWrapper chưa tương thích với preview của ComfyUI mới.
 - `nodes/free_memory_after_run.py`: CogVideoXWrapper tự đưa model lên GPU, đi vòng qua bộ quản lý
   VRAM của ComfyUI → ~5.7GB bị giữ giữa các lần chạy và lần sau báo "Not enough GPU memory".
   Extension tự *Unload Models and Execution Cache* sau mỗi job (đổi lại: load lại model ~30–50s).
+
+## MiniMax-H3 (video + âm thanh)
+
+Model thứ hai, chạy native trong ComfyUI 0.37 (không cần custom node). File (~44GB, từ
+[Comfy-Org/MiniMax-H3](https://huggingface.co/Comfy-Org/MiniMax-H3)) — gom sẵn ở repo HF private
+`toixtran/minimax-h3-comfy`, cùng cấu trúc thư mục `comfyui/models/`:
+
+| Thư mục | File |
+|---|---|
+| diffusion_models | `minimax_h3_fl2va_pruned_int8_convrot` (21GB) |
+| text_encoders | `qwen3vl_32b_minimax_h3_nvfp4_awq` (15.7GB) |
+| vae | `minimax_h3_video_vae_fp16` (5.2GB), `minimax_h3_audio_vae_fp32` |
+| loras | `minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16` |
+
+- UI: `workflows/minimax_h3_i2v_official.json` (template chính thức). API/benchmark:
+  `workflows/api/minimax_h3_i2v_turbo.json` — 864×480, 5s (124 frame), turbo LoRA 6 bước, seed 42.
+- VAE video dùng bản **fp16** thay cho `int8_convrot` của template: bản int8 gọi kernel `comfy_kitchen`
+  build cho CUDA 13 → lỗi `CUDA driver version is insufficient` với driver 570 (CUDA 12.8).
+- Cần RAM lớn: ComfyUI dùng ~38GB RAM, VRAM ~11.6GB. RTX 4070 Super (RAM 64GB): **182s**/video
+  (sampling 24.5 s/bước).
+- **License** (MiniMax H3 Community): không dùng tại Mỹ, EU, Anh, Hàn Quốc (kể cả hosted);
+  sản phẩm thương mại phải hiển thị "MiniMax H3". Trên RunPod chỉ chọn data center ngoài các vùng đó.
 
 ## Đưa lên RunPod
 

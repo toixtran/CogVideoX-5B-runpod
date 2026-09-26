@@ -10,3 +10,4 @@ runpod_key
 /.hf-venv/
 hf_token
 .hf_token
+/hf-models-h3/

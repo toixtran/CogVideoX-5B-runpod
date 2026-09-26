@@ -93,3 +93,23 @@ docker rm -f cogvideox-worker
 ```
 
 `*_local.json` giữ `offload_device` cho GPU 12GB; `*_cloud.json` dùng `main_device` cho 24GB.
+
+## Endpoint MiniMax-H3
+
+Cùng image (`toitx/cogvideox-5b-runpod:1.1.0` trở lên — `start.sh` link mọi thư mục `diffusion_models/`,
+`text_encoders/`, `vae/`, `loras/`... của repo cached model vào `/comfyui/models/`):
+
+| Mục | Giá trị |
+|---|---|
+| Container image | `toitx/cogvideox-5b-runpod:1.1.0` |
+| Cached model | `toixtran/minimax-h3-comfy` + HF token Read |
+| Env | `MODEL_REPO=toixtran/minimax-h3-comfy` |
+| GPU | 24 GB PRO (4090) — model 21GB + text encoder 15.7GB chạy nhờ dynamic VRAM |
+| CUDA versions | 12.8 trở lên |
+| **Data centers** | **Chỉ ngoài Mỹ/EU/Anh/Hàn Quốc** (license H3): vd. CA-MTL-\*, OC-AU-\*, EUR-IS-\*, EUR-NO-\* |
+
+```bash
+RUNPOD_API_KEY=... python3 scripts/runpod_client.py --endpoint-id <ID> \
+  --workflow workflows/api/minimax_h3_i2v_turbo.json --image comfyui/input/chess_landscape.jpg --seed 42 --out h3.mp4
+```
+

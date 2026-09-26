@@ -39,7 +39,7 @@ target.add_argument("--endpoint-id", help="ID endpoint RunPod Serverless")
 target.add_argument("--url", help="URL worker chạy local, vd. http://localhost:8000")
 parser.add_argument("--workflow", default=str(Path(__file__).parent.parent / "workflows/api/cogvideox_youtube_16x9_cloud.json"))
 parser.add_argument("--image", required=True)
-parser.add_argument("--prompt", required=True)
+parser.add_argument("--prompt", help="mặc định: giữ prompt có sẵn trong workflow")
 parser.add_argument("--seed", type=int, default=None, help="mặc định: ngẫu nhiên")
 parser.add_argument("--steps", type=int, default=None)
 parser.add_argument("--out", default="video.mp4")
@@ -50,11 +50,15 @@ api_key = os.environ.get("RUNPOD_API_KEY")
 
 wf = json.load(open(args.workflow))
 image_name = "input_" + Path(args.image).name
-wf[PROMPT_NODE]["inputs"]["prompt"] = args.prompt
+if args.prompt:
+    wf[PROMPT_NODE]["inputs"]["prompt"] = args.prompt
 wf[IMAGE_NODE]["inputs"]["image"] = image_name
-wf[SAMPLER_NODE]["inputs"]["seed"] = args.seed if args.seed is not None else random.randint(0, 2**32 - 1)
+# CogVideoSampler dùng "seed"; RandomNoise (MiniMax-H3) dùng "noise_seed".
+sampler = wf[SAMPLER_NODE]["inputs"]
+seed_key = "noise_seed" if "noise_seed" in sampler else "seed"
+sampler[seed_key] = args.seed if args.seed is not None else random.randint(0, 2**32 - 1)
 if args.steps:
-    wf[SAMPLER_NODE]["inputs"]["steps"] = args.steps
+    sampler["steps"] = args.steps
 
 image_b64 = base64.b64encode(Path(args.image).read_bytes()).decode()
 body = {"input": {"workflow": wf, "images": [{"name": image_name, "image": image_b64}]}}
@@ -62,7 +66,7 @@ if len(json.dumps(body)) > 9_500_000:
     sys.exit("Request > ~10MB (giới hạn /run của RunPod): hãy thu nhỏ ảnh xuống ~1280px.")
 
 job = call(f"{base}/run", api_key, body)
-print(f"job {job['id']} (seed {wf[SAMPLER_NODE]['inputs']['seed']})", flush=True)
+print(f"job {job['id']} (seed {sampler[seed_key]})", flush=True)
 start = time.time()
 while True:
     time.sleep(5)
