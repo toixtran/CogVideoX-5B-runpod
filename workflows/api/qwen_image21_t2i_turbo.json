@@ -1,0 +1,137 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "qwen_image_2.1_int8_convrot.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "2": {
+    "class_type": "TextEncodeQwenImage21",
+    "inputs": {
+      "clip": [
+        "4",
+        0
+      ],
+      "prompt": "Two young Vietnamese men in red esports jerseys playing chess on a low wooden table in front of a red velvet curtain, both laughing, warm cinematic lighting, a small wooden sign on the table reads \"TEAM TDF\", photorealistic 35mm photo, shallow depth of field",
+      "negative_prompt": "",
+      "resolution": 1024
+    }
+  },
+  "3": {
+    "class_type": "ViggleTurboLora",
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "lora_name": "Qwen-Image-2.1-viggle-turbo-v0.2.1-6step-lora-r128.safetensors",
+      "strength": 1.0
+    }
+  },
+  "4": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_8b_int8_convrot.safetensors",
+      "type": "qwen_image",
+      "device": "default"
+    }
+  },
+  "6": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "qwen_image_2.1_vae_bf16.safetensors"
+    }
+  },
+  "7": {
+    "class_type": "EmptyLatentImage",
+    "inputs": {
+      "width": 1024,
+      "height": 1024,
+      "batch_size": 1
+    }
+  },
+  "8": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 42
+    }
+  },
+  "9": {
+    "class_type": "ViggleTurboSigmas",
+    "inputs": {
+      "latent": [
+        "7",
+        0
+      ],
+      "nodes": "1.0, 0.9375, 0.875, 0.75, 0.5, 0.25"
+    }
+  },
+  "10": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "conditioning": [
+        "2",
+        0
+      ]
+    }
+  },
+  "11": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "euler"
+    }
+  },
+  "12": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "8",
+        0
+      ],
+      "guider": [
+        "10",
+        0
+      ],
+      "sampler": [
+        "11",
+        0
+      ],
+      "sigmas": [
+        "9",
+        0
+      ],
+      "latent_image": [
+        "7",
+        0
+      ]
+    }
+  },
+  "13": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "12",
+        0
+      ],
+      "vae": [
+        "6",
+        0
+      ]
+    }
+  },
+  "16": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": [
+        "13",
+        0
+      ],
+      "filename_prefix": "Qwen_Image_2.1/t2i_turbo"
+    }
+  }
+}

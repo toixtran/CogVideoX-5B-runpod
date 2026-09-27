@@ -116,6 +116,23 @@ Model thứ hai, chạy native trong ComfyUI 0.37 (không cần custom node). Fi
 - **License** (MiniMax H3 Community): không dùng tại Mỹ, EU, Anh, Hàn Quốc (kể cả hosted);
   sản phẩm thương mại phải hiển thị "MiniMax H3". Trên RunPod chỉ chọn data center ngoài các vùng đó.
 
+## Qwen-Image 2.1 (ảnh, thử nghiệm)
+
+Native trong ComfyUI 0.37. File từ [Comfy-Org/Qwen-Image-2.1](https://huggingface.co/Comfy-Org/Qwen-Image-2.1):
+`diffusion_models/qwen_image_2.1_int8_convrot`, `text_encoders/qwen3vl_8b_int8_convrot`, `vae/qwen_image_2.1_vae_bf16`;
+LoRA turbo [Viggle v0.2.1 6 bước r128](https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo) vào `loras/`
+và node `custom_nodes/viggle_turbo.py` (install.sh tải, ghim commit).
+
+| Workflow API | Lấy mẫu | 4070S, 1024×1024 |
+|---|---|---|
+| `workflows/api/qwen_image21_t2i.json` (template chính thức) | 25 bước, 1.90 s/bước | 54s |
+| `workflows/api/qwen_image21_t2i_turbo.json` (Viggle) | 6 bước, 2.05 s/bước | 20s (lần đầu load model 24s) |
+
+Turbo giữ bố cục của bản gốc, chữ nhỏ đôi khi méo. UI: `workflows/qwen_image21_viggle_turbo_t2i.json`
+(có bước viết lại prompt bằng LLM, tắt được bằng công tắc Boolean — tốn thêm thời gian).
+**License Qwen Research: chỉ phi thương mại** (cả model gốc lẫn LoRA) — dùng thương mại phải xin
+license riêng từ Qwen.
+
 ## Đưa lên RunPod
 
 **RunPod Hub**: repo có sẵn `.runpod/hub.json` và `.runpod/tests.json`. Vào RunPod → Hub → Add your repo,

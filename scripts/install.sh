@@ -20,6 +20,11 @@ clone https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git "$COMFY/cust
 
 ln -sfn "$ROOT/nodes/free_memory_after_run.py" "$COMFY/custom_nodes/free_memory_after_run.py"
 
+# Node Qwen-Image-2.1 viggle-turbo (lịch sigma 6 bước + LoRA không merge), ghim commit repo HF.
+VIGGLE="$COMFY/custom_nodes/viggle_turbo.py"
+[ -f "$VIGGLE" ] || curl -fsSL -o "$VIGGLE" \
+  https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo/resolve/bb26a0f38e5fe6c124aaccc9187a87eed5d9ed13/comfyui/viggle_turbo.py
+
 cd "$COMFY"
 [ -d .venv ] || uv venv --python 3.12 .venv
 PIP=(uv pip install --python .venv/bin/python)
