@@ -2,7 +2,7 @@
 
 [![Runpod](https://api.runpod.io/badge/toixtran/comfyui-video-runpod)](https://console.runpod.io/hub/toixtran/comfyui-video-runpod)
 
-Tạo video từ ảnh + prompt trên ComfyUI — **MiniMax-H3** (video + âm thanh, mặc định Q4_K) và
+Tạo video từ ảnh + prompt trên ComfyUI — **MiniMax-H3** (video + âm thanh, mặc định int8 + triton) và
 **CogVideoX-5B** (video) — làm workflow ở máy local (RTX 4070 Super 12GB), chạy production trên
 **RunPod Serverless** (GPU 24GB). Cùng một worker image; model chọn qua Cached model + `MODEL_REPO`.
 
@@ -99,10 +99,10 @@ Model thứ hai, chạy native trong ComfyUI 0.37 (không cần custom node). Fi
 | vae | `minimax_h3_video_vae_fp16` (5.2GB), `minimax_h3_audio_vae_fp32` |
 | loras | `minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16` |
 
-- **Mặc định: Q4_K + Dynamic VRAM + LoRA turbo 4 bước + SageAttention.** API:
-  `workflows/api/minimax_h3_i2v_turbo4_q4k_dynamic.json` (bản 6 bước lightx2v:
-  `minimax_h3_i2v_turbo_q4k_dynamic.json`; UI: `workflows/minimax_h3_i2v_q4k.json`).
-  Video 6.58s (158 frame) có thoại: RunPod 4090 96s ≈ $0.029/video (trước SageAttention).
+- **Mặc định: int8_convrot + triton backend + LoRA turbo 4 bước + SageAttention.** API:
+  `workflows/api/minimax_h3_i2v_turbo4_int8.json` (4070S: 120s cho video 6.58s có thoại).
+  Bản Q4_K GGUF: `minimax_h3_i2v_turbo4_q4k_dynamic.json` (RunPod 4090 trước SageAttention/triton:
+  96s ≈ $0.029/video); 6 bước lightx2v: `minimax_h3_i2v_turbo_q4k_dynamic.json`; UI: `workflows/minimax_h3_i2v_q4k.json`.
 - SageAttention (`--use-sage-attention`, bật sẵn trong `run_comfyui.sh` và image 1.3.0): lấy mẫu
   28.8 → 23.5 s/bước trên 4070S, chất lượng hình/tiếng như SDPA.
 - **int8 + triton backend nhanh hơn Q4**: `workflows/api/minimax_h3_i2v_turbo4_int8.json` với

@@ -101,7 +101,7 @@ Cùng image (`toitx/comfyui-video-runpod:1.3.1` — `start.sh` link mọi thư m
 
 | Mục | Giá trị |
 |---|---|
-| Container image | `toitx/comfyui-video-runpod:1.3.1` (node GGUF cho Q4_K, SageAttention) |
+| Container image | `toitx/comfyui-video-runpod:1.3.1` (SageAttention, triton backend cho int8; node GGUF cho Q4_K) |
 | Cached model | `toixtran/minimax-h3-comfy` + HF token Read |
 | Env | `MODEL_REPO=toixtran/minimax-h3-comfy` |
 | GPU | 24 GB PRO (4090) — model 21GB + text encoder 15.7GB chạy nhờ dynamic VRAM |
@@ -111,6 +111,6 @@ Cùng image (`toitx/comfyui-video-runpod:1.3.1` — `start.sh` link mọi thư m
 
 ```bash
 RUNPOD_API_KEY=... python3 scripts/runpod_client.py --endpoint-id <ID> \
-  --workflow workflows/api/minimax_h3_i2v_turbo4_q4k_dynamic.json --image comfyui/input/chess_landscape.jpg --seed 42 --out h3.mp4
+  --workflow workflows/api/minimax_h3_i2v_turbo4_int8.json --image comfyui/input/chess_landscape.jpg --seed 42 --out h3.mp4
 ```
 
