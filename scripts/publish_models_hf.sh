@@ -65,7 +65,7 @@ license_link: https://huggingface.co/zai-org/CogVideoX-5b-I2V/blob/main/LICENSE
 # CogVideoX-5B I2V — model cho ComfyUI worker RunPod
 
 Gom sẵn mọi model để dùng làm **Cached Model** của endpoint RunPod Serverless
-(\`toixtran/CogVideoX-5B-runpod\`). Không chỉnh sửa trọng số; chỉ phân phối lại.
+(\`toixtran/comfyui-video-runpod\`). Không chỉnh sửa trọng số; chỉ phân phối lại.
 
 | Đường dẫn | Nguồn | License |
 |---|---|---|

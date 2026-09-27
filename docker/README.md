@@ -28,7 +28,7 @@ export HF_TOKEN=hf_...                  # token quyền write: https://huggingfa
 
 Script tải ~17GB vào `hf-models/` (tải tiếp nếu bị ngắt), thêm README + LICENSE gốc của từng model,
 rồi upload (chạy lại là upload tiếp). Mạng nhà chậm thì chạy trên một **Pod** RunPod rẻ (CPU là đủ,
-disk ≥ 40GB): `git clone https://github.com/toixtran/CogVideoX-5B-runpod && cd CogVideoX-5B-runpod`
+disk ≥ 40GB): `git clone https://github.com/toixtran/comfyui-video-runpod && cd comfyui-video-runpod`
 rồi chạy 2 lệnh trên. Đổi tên repo thì đặt thêm biến `MODEL_REPO=<user>/<tên>` cho endpoint.
 
 ## 1. Image: RunPod build từ GitHub
@@ -53,7 +53,7 @@ RunPod → Serverless → New Endpoint → **Import Git Repository**:
 
 | Mục | Giá trị |
 |---|---|
-| Repository / Branch | `toixtran/CogVideoX-5B-runpod` / `main` |
+| Repository / Branch | `toixtran/comfyui-video-runpod` / `main` |
 | Dockerfile path | `Dockerfile` |
 | **Model** (Cached Models) | `toixtran/cogvideox-5b-i2v-comfy` — repo private thì điền thêm HF token (quyền read) |
 | GPU (tối đa 3 nhóm, theo ưu tiên) | 1: **24 GB PRO** (RTX 4090) — rẻ nhất tính theo mỗi video vì model vừa 24GB; dự phòng 2: 48 GB PRO (chỉ khi hết 4090). Bỏ nhóm "24 GB" thường |

@@ -1,9 +1,10 @@
-# CogVideoX-5B-runpod
+# comfyui-video-runpod
 
-[![Runpod](https://api.runpod.io/badge/toixtran/CogVideoX-5B-runpod)](https://console.runpod.io/hub/toixtran/CogVideoX-5B-runpod)
+[![Runpod](https://api.runpod.io/badge/toixtran/comfyui-video-runpod)](https://console.runpod.io/hub/toixtran/comfyui-video-runpod)
 
-Tạo video từ ảnh + prompt bằng **CogVideoX-5B Image-to-Video** trên ComfyUI: làm workflow ở máy
-local (RTX 4070 Super 12GB), chạy production trên **RunPod Serverless** (GPU 24GB).
+Tạo video từ ảnh + prompt trên ComfyUI — **MiniMax-H3** (video + âm thanh, mặc định Q4_K) và
+**CogVideoX-5B** (video) — làm workflow ở máy local (RTX 4070 Super 12GB), chạy production trên
+**RunPod Serverless** (GPU 24GB). Cùng một worker image; model chọn qua Cached model + `MODEL_REPO`.
 
 ```
 [Local R&D: ComfyUI]  ── Export (API) ──►  [workflows/api/*.json]  ──►  [RunPod Serverless]
