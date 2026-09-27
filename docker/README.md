@@ -45,7 +45,7 @@ Muốn đưa lên **RunPod Hub**: Hub đọc `.runpod/hub.json` (GPU, CUDA) và 
 `.runpod/tests.json` (workflow cloud, 10 steps, ảnh PNG nhỏ base64) sau mỗi Release.
 
 Cách thay thế: build ở máy rồi đẩy registry — `./docker/build.sh --push`
-(→ `toitx/cogvideox-5b-runpod:<TAG>`; repo Private thì thêm Container Registry Auth trên RunPod).
+(→ `toitx/comfyui-video-runpod:<TAG>`; repo Private thì thêm Container Registry Auth trên RunPod).
 
 ## 2. Tạo Serverless Endpoint
 
@@ -65,7 +65,7 @@ RunPod → Serverless → New Endpoint → **Import Git Repository**:
 Không đặt biến `BUCKET_*`: worker trả video MP4 dạng base64 trong `output.images[].data`.
 
 Deploy → lấy **Endpoint ID**; API key ở Settings → API Keys. Log worker phải có dòng
-`cogvideox-5b-runpod: model từ cached model ...`; thấy `ERROR không thấy cached model` thì ô Model
+`comfyui-video-runpod: model từ cached model ...`; thấy `ERROR không thấy cached model` thì ô Model
 chưa đúng hoặc thiếu HF token (repo private).
 
 ## 3. Gửi thử
@@ -96,12 +96,12 @@ docker rm -f cogvideox-worker
 
 ## Endpoint MiniMax-H3
 
-Cùng image (`toitx/cogvideox-5b-runpod:1.1.0` trở lên — `start.sh` link mọi thư mục `diffusion_models/`,
+Cùng image (`toitx/comfyui-video-runpod:1.2.0`; tên cũ `toitx/cogvideox-5b-runpod` cùng nội dung — `start.sh` link mọi thư mục `diffusion_models/`,
 `text_encoders/`, `vae/`, `loras/`... của repo cached model vào `/comfyui/models/`):
 
 | Mục | Giá trị |
 |---|---|
-| Container image | `toitx/cogvideox-5b-runpod:1.2.0` (có node GGUF cho Q4_K) |
+| Container image | `toitx/comfyui-video-runpod:1.2.0` (có node GGUF cho Q4_K) |
 | Cached model | `toixtran/minimax-h3-comfy` + HF token Read |
 | Env | `MODEL_REPO=toixtran/minimax-h3-comfy` |
 | GPU | 24 GB PRO (4090) — model 21GB + text encoder 15.7GB chạy nhờ dynamic VRAM |
