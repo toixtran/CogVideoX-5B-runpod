@@ -96,20 +96,21 @@ docker rm -f cogvideox-worker
 
 ## Endpoint MiniMax-H3
 
-Cùng image (`toitx/comfyui-video-runpod:1.2.0`; tên cũ `toitx/cogvideox-5b-runpod` cùng nội dung — `start.sh` link mọi thư mục `diffusion_models/`,
+Cùng image (`toitx/comfyui-video-runpod:1.3.0` — `start.sh` link mọi thư mục `diffusion_models/`,
 `text_encoders/`, `vae/`, `loras/`... của repo cached model vào `/comfyui/models/`):
 
 | Mục | Giá trị |
 |---|---|
-| Container image | `toitx/comfyui-video-runpod:1.2.0` (có node GGUF cho Q4_K) |
+| Container image | `toitx/comfyui-video-runpod:1.3.0` (node GGUF cho Q4_K, SageAttention) |
 | Cached model | `toixtran/minimax-h3-comfy` + HF token Read |
 | Env | `MODEL_REPO=toixtran/minimax-h3-comfy` |
 | GPU | 24 GB PRO (4090) — model 21GB + text encoder 15.7GB chạy nhờ dynamic VRAM |
 | CUDA versions | 12.8 trở lên |
+| Env tuỳ chọn | `COMFY_EXTRA_ARGS` (mặc định `--use-sage-attention`), `FREE_MEMORY_AFTER_RUN` (mặc định `0` với H3: giữ model giữa các job) |
 | **Data centers** | **Chỉ ngoài Mỹ/EU/Anh/Hàn Quốc** (license H3): vd. CA-MTL-\*, OC-AU-\*, EUR-IS-\*, EUR-NO-\* |
 
 ```bash
 RUNPOD_API_KEY=... python3 scripts/runpod_client.py --endpoint-id <ID> \
-  --workflow workflows/api/minimax_h3_i2v_turbo_q4k_dynamic.json --image comfyui/input/chess_landscape.jpg --seed 42 --out h3.mp4
+  --workflow workflows/api/minimax_h3_i2v_turbo4_q4k_dynamic.json --image comfyui/input/chess_landscape.jpg --seed 42 --out h3.mp4
 ```
 

@@ -99,8 +99,12 @@ Model thứ hai, chạy native trong ComfyUI 0.37 (không cần custom node). Fi
 | vae | `minimax_h3_video_vae_fp16` (5.2GB), `minimax_h3_audio_vae_fp32` |
 | loras | `minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16` |
 
-- **Mặc định: Q4_K + Dynamic VRAM + LoRA turbo lightx2v 6 bước.** UI: `workflows/minimax_h3_i2v_q4k.json`;
-  API: `workflows/api/minimax_h3_i2v_turbo_q4k_dynamic.json`. Template gốc (int8): `workflows/minimax_h3_i2v_official.json`. API/benchmark:
+- **Mặc định: Q4_K + Dynamic VRAM + LoRA turbo 4 bước + SageAttention.** API:
+  `workflows/api/minimax_h3_i2v_turbo4_q4k_dynamic.json` (bản 6 bước lightx2v:
+  `minimax_h3_i2v_turbo_q4k_dynamic.json`; UI: `workflows/minimax_h3_i2v_q4k.json`).
+  Video 6.58s (158 frame) có thoại: RunPod 4090 96s ≈ $0.029/video (trước SageAttention).
+- SageAttention (`--use-sage-attention`, bật sẵn trong `run_comfyui.sh` và image 1.3.0): lấy mẫu
+  28.8 → 23.5 s/bước trên 4070S, chất lượng hình/tiếng như SDPA. Template gốc (int8): `workflows/minimax_h3_i2v_official.json`. API/benchmark:
   `workflows/api/minimax_h3_i2v_turbo.json` — 864×576 (đúng tỉ lệ 3:2 của ảnh; H3 kéo giãn ảnh theo width/height nên phải khớp tỉ lệ), 5s (124 frame), turbo LoRA 6 bước, seed 42.
 - VAE video dùng bản **fp16** thay cho `int8_convrot` của template: bản int8 gọi kernel `comfy_kitchen`
   build cho CUDA 13 → lỗi `CUDA driver version is insufficient` với driver 570 (CUDA 12.8).

@@ -35,6 +35,14 @@ RUN cd /comfyui/custom_nodes \
  && git -C ComfyUI-GGUF checkout ${COMFYUI_GGUF_COMMIT} \
  && uv pip install --python $UV_PYTHON "gguf>=0.13.0"
 
+# SageAttention 1.x (kernel Triton, không cần build): MiniMax-H3 lấy mẫu nhanh hơn ~18% trên Ada
+# (4070S 28.8 -> 23.5 s/bước), chất lượng như SDPA. Lỗi thì ComfyUI tự quay về pytorch attention.
+RUN uv pip install --python $UV_PYTHON "sageattention==1.0.6"
+
+# /start.sh gốc không nhận thêm cờ cho ComfyUI: chèn $COMFY_EXTRA_ARGS (docker/start.sh đặt mặc định).
+RUN sed -i 's|--log-stdout &|--log-stdout ${COMFY_EXTRA_ARGS} \&|' /start.sh \
+ && [ "$(grep -c 'COMFY_EXTRA_ARGS' /start.sh)" = 2 ]
+
 COPY nodes/free_memory_after_run.py /comfyui/custom_nodes/free_memory_after_run.py
 
 # handler.py (repo) thay /handler.py gốc và import lại handler gốc.

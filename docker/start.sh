@@ -8,6 +8,16 @@
 #   CogVideoX-5b-I2V/ -> models/CogVideo/CogVideoX-5b-I2V (CogVideoXWrapper đọc cả thư mục)
 #   rife/             -> custom_nodes/ComfyUI-Frame-Interpolation/ckpts/rife/
 MODEL_REPO="${MODEL_REPO:-toixtran/cogvideox-5b-i2v-comfy}"
+
+# Cờ thêm cho ComfyUI (/start.sh gốc đã được Dockerfile chèn $COMFY_EXTRA_ARGS). Đặt biến
+# COMFY_EXTRA_ARGS trên endpoint để ghi đè; đặt rỗng để tắt SageAttention.
+export COMFY_EXTRA_ARGS="${COMFY_EXTRA_ARGS---use-sage-attention}"
+# Hook giải phóng VRAM sau mỗi job chỉ cần cho CogVideoXWrapper; model native (MiniMax-H3) giữ
+# lại trong RAM để job kế tiếp trên cùng worker khỏi load lại (~11s).
+case "$MODEL_REPO" in
+  *cogvideox*) export FREE_MEMORY_AFTER_RUN="${FREE_MEMORY_AFTER_RUN:-1}" ;;
+  *)           export FREE_MEMORY_AFTER_RUN="${FREE_MEMORY_AFTER_RUN:-0}" ;;
+esac
 CACHE="/runpod-volume/huggingface-cache/hub/models--${MODEL_REPO//\//--}"
 
 SNAPSHOT="$CACHE/snapshots/$(cat "$CACHE/refs/main" 2>/dev/null)"

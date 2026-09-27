@@ -30,7 +30,7 @@ PIP=(uv pip install --python .venv/bin/python)
   -r custom_nodes/ComfyUI-GGUF/requirements.txt \
   -r custom_nodes/ComfyUI-CogVideoXWrapper/requirements.txt \
   -r custom_nodes/ComfyUI-VideoHelperSuite/requirements.txt \
-  huggingface_hub "transformers>=4.49.0" "timm>=1.0.15" kornia scipy
+  huggingface_hub "transformers>=4.49.0" "timm>=1.0.15" kornia scipy "sageattention==1.0.6"
 # Bỏ qua 'jax' trong requirements của HunyuanVideoWrapper (chỉ dùng cho tính năng phụ, rất nặng).
 # Frame-Interpolation: không cài cupy / opencv-contrib-python — RIFE không cần, và
 # opencv-contrib xung đột với opencv-python mà các node khác dùng.

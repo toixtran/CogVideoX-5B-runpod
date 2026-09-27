@@ -21,11 +21,16 @@ RAM_GB=$(awk '/MemTotal/ {print int($2 / 1048576)}' /proc/meminfo)
 LOW_RAM_ARGS=()
 [ "$RAM_GB" -lt 48 ] && LOW_RAM_ARGS=(--disable-pinned-memory --cache-none)
 
+# SageAttention (cài bởi install.sh): MiniMax-H3 lấy mẫu nhanh hơn ~18%, chất lượng như SDPA.
+SAGE_ARGS=()
+.venv/bin/python -c "import sageattention" 2>/dev/null && SAGE_ARGS=(--use-sage-attention)
+
 exec .venv/bin/python main.py \
   --listen "${LISTEN:-127.0.0.1}" \
   --port "${PORT:-8188}" \
   --reserve-vram 0.6 \
   "${LOW_RAM_ARGS[@]}" \
+  "${SAGE_ARGS[@]}" \
   "$@"
 # Không bật --preview-method: CogVideoXWrapper chưa tương thích với live preview
 # của ComfyUI core mới (AttributeError latent_rgb_factors_reshape).
