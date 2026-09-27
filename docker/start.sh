@@ -10,8 +10,8 @@
 MODEL_REPO="${MODEL_REPO:-toixtran/cogvideox-5b-i2v-comfy}"
 
 # Cờ thêm cho ComfyUI (/start.sh gốc đã được Dockerfile chèn $COMFY_EXTRA_ARGS). Đặt biến
-# COMFY_EXTRA_ARGS trên endpoint để ghi đè; đặt rỗng để tắt SageAttention.
-export COMFY_EXTRA_ARGS="${COMFY_EXTRA_ARGS---use-sage-attention}"
+# COMFY_EXTRA_ARGS trên endpoint để ghi đè; đặt rỗng để tắt SageAttention và triton backend.
+export COMFY_EXTRA_ARGS="${COMFY_EXTRA_ARGS---use-sage-attention --enable-triton-backend}"
 # Hook giải phóng VRAM sau mỗi job chỉ cần cho CogVideoXWrapper; model native (MiniMax-H3) giữ
 # lại trong RAM để job kế tiếp trên cùng worker khỏi load lại (~11s).
 case "$MODEL_REPO" in

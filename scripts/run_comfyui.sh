@@ -21,6 +21,9 @@ RAM_GB=$(awk '/MemTotal/ {print int($2 / 1048576)}' /proc/meminfo)
 LOW_RAM_ARGS=()
 [ "$RAM_GB" -lt 48 ] && LOW_RAM_ARGS=(--disable-pinned-memory --cache-none)
 
+# --enable-triton-backend: kernel triton cho model int8 (Qwen-Image 2.1: 2.0 -> 0.57 s/bước; H3 int8:
+# 34 -> 16 s/bước), GGUF không đổi. --disable-fast-disk: model bị đẩy khỏi VRAM nằm ở pinned RAM thay
+# vì đọc lại từ file -> đổi text encoder <-> DiT nhanh hơn (Qwen-Image 12 -> 10s/ảnh).
 # SageAttention (cài bởi install.sh): MiniMax-H3 lấy mẫu nhanh hơn ~18%, chất lượng như SDPA.
 SAGE_ARGS=()
 .venv/bin/python -c "import sageattention" 2>/dev/null && SAGE_ARGS=(--use-sage-attention)
@@ -31,6 +34,8 @@ exec .venv/bin/python main.py \
   --reserve-vram 0.6 \
   "${LOW_RAM_ARGS[@]}" \
   "${SAGE_ARGS[@]}" \
+  --enable-triton-backend \
+  --disable-fast-disk \
   "$@"
 # Không bật --preview-method: CogVideoXWrapper chưa tương thích với live preview
 # của ComfyUI core mới (AttributeError latent_rgb_factors_reshape).

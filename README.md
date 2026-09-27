@@ -104,7 +104,18 @@ Model thứ hai, chạy native trong ComfyUI 0.37 (không cần custom node). Fi
   `minimax_h3_i2v_turbo_q4k_dynamic.json`; UI: `workflows/minimax_h3_i2v_q4k.json`).
   Video 6.58s (158 frame) có thoại: RunPod 4090 96s ≈ $0.029/video (trước SageAttention).
 - SageAttention (`--use-sage-attention`, bật sẵn trong `run_comfyui.sh` và image 1.3.0): lấy mẫu
-  28.8 → 23.5 s/bước trên 4070S, chất lượng hình/tiếng như SDPA. Template gốc (int8): `workflows/minimax_h3_i2v_official.json`. API/benchmark:
+  28.8 → 23.5 s/bước trên 4070S, chất lượng hình/tiếng như SDPA.
+- **int8 + triton backend nhanh hơn Q4**: `workflows/api/minimax_h3_i2v_turbo4_int8.json` với
+  `--enable-triton-backend` (bật sẵn trong `run_comfyui.sh`, image 1.3.1). 4070S, 6.58s có thoại, 4 bước:
+
+  | DiT | s/bước | Tổng |
+  |---|---|---|
+  | Q4_K GGUF (triton không tác dụng) | 23.5–23.9 | 138–144s |
+  | int8_convrot, không triton | 34.2 | 181s |
+  | **int8_convrot + triton** | **16.1** | **120s** |
+  | int4 W4A8 (koongrizzly) + triton | 41.0 | 226s |
+
+  Template gốc (int8): `workflows/minimax_h3_i2v_official.json`. API/benchmark:
   `workflows/api/minimax_h3_i2v_turbo.json` — 864×576 (đúng tỉ lệ 3:2 của ảnh; H3 kéo giãn ảnh theo width/height nên phải khớp tỉ lệ), 5s (124 frame), turbo LoRA 6 bước, seed 42.
 - VAE video dùng bản **fp16** thay cho `int8_convrot` của template: bản int8 gọi kernel `comfy_kitchen`
   build cho CUDA 13 → lỗi `CUDA driver version is insufficient` với driver 570 (CUDA 12.8).

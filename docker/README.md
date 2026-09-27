@@ -96,17 +96,17 @@ docker rm -f cogvideox-worker
 
 ## Endpoint MiniMax-H3
 
-Cùng image (`toitx/comfyui-video-runpod:1.3.0` — `start.sh` link mọi thư mục `diffusion_models/`,
+Cùng image (`toitx/comfyui-video-runpod:1.3.1` — `start.sh` link mọi thư mục `diffusion_models/`,
 `text_encoders/`, `vae/`, `loras/`... của repo cached model vào `/comfyui/models/`):
 
 | Mục | Giá trị |
 |---|---|
-| Container image | `toitx/comfyui-video-runpod:1.3.0` (node GGUF cho Q4_K, SageAttention) |
+| Container image | `toitx/comfyui-video-runpod:1.3.1` (node GGUF cho Q4_K, SageAttention) |
 | Cached model | `toixtran/minimax-h3-comfy` + HF token Read |
 | Env | `MODEL_REPO=toixtran/minimax-h3-comfy` |
 | GPU | 24 GB PRO (4090) — model 21GB + text encoder 15.7GB chạy nhờ dynamic VRAM |
 | CUDA versions | 12.8 trở lên |
-| Env tuỳ chọn | `COMFY_EXTRA_ARGS` (mặc định `--use-sage-attention`), `FREE_MEMORY_AFTER_RUN` (mặc định `0` với H3: giữ model giữa các job) |
+| Env tuỳ chọn | `COMFY_EXTRA_ARGS` (mặc định `--use-sage-attention --enable-triton-backend`), `FREE_MEMORY_AFTER_RUN` (mặc định `0` với H3: giữ model giữa các job) |
 | **Data centers** | **Chỉ ngoài Mỹ/EU/Anh/Hàn Quốc** (license H3): vd. CA-MTL-\*, OC-AU-\*, EUR-IS-\*, EUR-NO-\* |
 
 ```bash
