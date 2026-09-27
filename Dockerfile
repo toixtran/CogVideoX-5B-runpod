@@ -27,6 +27,14 @@ RUN cd /comfyui/custom_nodes \
  && uv pip install --python $UV_PYTHON -r ComfyUI-CogVideoXWrapper/requirements.txt kornia scipy
 # Frame-Interpolation: không cài cupy / opencv-contrib-python — RIFE không cần.
 
+# ComfyUI-GGUF bản fork molbal: bản city96 (ngừng từ 01/2026) không đọc được GGUF MiniMax-H3.
+# Cần cho model Q4_K (UnetLoaderGGUFDynamicVRAM). Ghim commit đã test ở local.
+ARG COMFYUI_GGUF_COMMIT=48de657b3aa830ae6981960e928b31cb51fd16aa
+RUN cd /comfyui/custom_nodes \
+ && git clone https://github.com/molbal/ComfyUI-GGUF.git \
+ && git -C ComfyUI-GGUF checkout ${COMFYUI_GGUF_COMMIT} \
+ && uv pip install --python $UV_PYTHON "gguf>=0.13.0"
+
 COPY nodes/free_memory_after_run.py /comfyui/custom_nodes/free_memory_after_run.py
 
 # handler.py (repo) thay /handler.py gốc và import lại handler gốc.

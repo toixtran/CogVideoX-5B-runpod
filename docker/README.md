@@ -101,7 +101,7 @@ Cùng image (`toitx/cogvideox-5b-runpod:1.1.0` trở lên — `start.sh` link m�
 
 | Mục | Giá trị |
 |---|---|
-| Container image | `toitx/cogvideox-5b-runpod:1.1.0` |
+| Container image | `toitx/cogvideox-5b-runpod:1.2.0` (có node GGUF cho Q4_K) |
 | Cached model | `toixtran/minimax-h3-comfy` + HF token Read |
 | Env | `MODEL_REPO=toixtran/minimax-h3-comfy` |
 | GPU | 24 GB PRO (4090) — model 21GB + text encoder 15.7GB chạy nhờ dynamic VRAM |
@@ -110,6 +110,6 @@ Cùng image (`toitx/cogvideox-5b-runpod:1.1.0` trở lên — `start.sh` link m�
 
 ```bash
 RUNPOD_API_KEY=... python3 scripts/runpod_client.py --endpoint-id <ID> \
-  --workflow workflows/api/minimax_h3_i2v_turbo.json --image comfyui/input/chess_landscape.jpg --seed 42 --out h3.mp4
+  --workflow workflows/api/minimax_h3_i2v_turbo_q4k_dynamic.json --image comfyui/input/chess_landscape.jpg --seed 42 --out h3.mp4
 ```
 
