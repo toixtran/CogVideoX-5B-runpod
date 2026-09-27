@@ -144,6 +144,14 @@ Turbo giữ bố cục của bản gốc, chữ nhỏ đôi khi méo. UI: `workf
 **License Qwen Research: chỉ phi thương mại** (cả model gốc lẫn LoRA) — dùng thương mại phải xin
 license riêng từ Qwen.
 
+## FLUX.2 Klein 4B (ảnh, nhanh, Apache 2.0)
+
+Bản distilled đã là turbo (4 bước, CFG 1), không cần LoRA. File: `diffusion_models/flux-2-klein-4b-fp8`
+([BFL](https://huggingface.co/black-forest-labs/FLUX.2-klein-4b-fp8)), `text_encoders/qwen_3_4b_fp8_mixed`
+([Comfy-Org/z_image_turbo](https://huggingface.co/Comfy-Org/z_image_turbo)), `vae/flux2-vae` — fp8 để TE + DiT
+cùng vừa 12GB. API: `workflows/api/flux2_klein4b_t2i.json`. 4070S, 896×1152: **3.0s/ảnh** prompt mới
+(Qwen-Image 2.1 turbo: 10.7s). Ảnh sáng, sạch, bố cục tốt nhưng da mịn kiểu "chỉnh ảnh", kém chi tiết tóc/da hơn Qwen.
+
 ## Đưa lên RunPod
 
 **RunPod Hub**: repo có sẵn `.runpod/hub.json` và `.runpod/tests.json`. Vào RunPod → Hub → Add your repo,
