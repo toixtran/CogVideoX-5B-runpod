@@ -24,6 +24,10 @@ LOW_RAM_ARGS=()
 # --enable-triton-backend: kernel triton cho model int8 (Qwen-Image 2.1: 2.0 -> 0.57 s/bước; H3 int8:
 # 34 -> 16 s/bước), GGUF không đổi. --disable-fast-disk: model bị đẩy khỏi VRAM nằm ở pinned RAM thay
 # vì đọc lại từ file -> đổi text encoder <-> DiT nhanh hơn (Qwen-Image 12 -> 10s/ảnh).
+# Giữ model trong RAM/VRAM giữa các job (MiniMax-H3, Qwen-Image: job sau khỏi load lại).
+# CogVideoX (wrapper tự giữ VRAM ngoài tầm ComfyUI) cần FREE_MEMORY_AFTER_RUN=1 để khỏi OOM.
+export FREE_MEMORY_AFTER_RUN="${FREE_MEMORY_AFTER_RUN:-0}"
+
 # SageAttention (cài bởi install.sh): MiniMax-H3 lấy mẫu nhanh hơn ~18%, chất lượng như SDPA.
 SAGE_ARGS=()
 .venv/bin/python -c "import sageattention" 2>/dev/null && SAGE_ARGS=(--use-sage-attention)
