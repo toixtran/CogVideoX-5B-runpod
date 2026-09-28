@@ -19,6 +19,7 @@ clone https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git "$COMFY/custom
 clone https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git "$COMFY/custom_nodes/ComfyUI-Frame-Interpolation"
 
 ln -sfn "$ROOT/nodes/free_memory_after_run.py" "$COMFY/custom_nodes/free_memory_after_run.py"
+ln -sfn "$ROOT/nodes/qwen_image21_runtime_lora.py" "$COMFY/custom_nodes/qwen_image21_runtime_lora.py"
 
 # Node Qwen-Image-2.1 viggle-turbo (lịch sigma 6 bước + LoRA không merge), ghim commit repo HF.
 VIGGLE="$COMFY/custom_nodes/viggle_turbo.py"
