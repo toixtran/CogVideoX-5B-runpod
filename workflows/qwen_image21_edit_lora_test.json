@@ -2,7 +2,7 @@
  "id": "33634f98-d5a4-4a96-a497-228b23bda9c1",
  "revision": 0,
  "last_node_id": 33,
- "last_link_id": 40,
+ "last_link_id": 41,
  "nodes": [
   {
    "id": 1,
@@ -984,7 +984,7 @@
      "shape": 7,
      "type": "IMAGE",
      "pos": null,
-     "link": 34
+     "link": 41
     },
     {
      "color_off": null,
@@ -2483,7 +2483,7 @@
      "slot_index": null,
      "links": [
       30,
-      32
+      41
      ]
     },
     {
@@ -2514,193 +2514,6 @@
    "widgets_values_named": {
     "image": "anime_aodai.png",
     "upload": "image"
-   }
-  },
-  {
-   "id": 27,
-   "type": "LoadImage",
-   "pos": [
-    976.9,
-    416
-   ],
-   "size": [
-    320,
-    326
-   ],
-   "flags": {},
-   "order": 26,
-   "mode": 0,
-   "showAdvanced": null,
-   "inputs": [
-    {
-     "color_off": null,
-     "color_on": null,
-     "dir": null,
-     "label": null,
-     "localized_name": "image",
-     "locked": null,
-     "name": "image",
-     "nameLocked": null,
-     "removable": null,
-     "shape": null,
-     "type": "COMBO",
-     "widget": {
-      "name": "image"
-     },
-     "link": null
-    },
-    {
-     "color_off": null,
-     "color_on": null,
-     "dir": null,
-     "label": null,
-     "localized_name": "choose file to upload",
-     "locked": null,
-     "name": "upload",
-     "nameLocked": null,
-     "removable": null,
-     "shape": null,
-     "type": "IMAGEUPLOAD",
-     "widget": {
-      "name": "upload"
-     },
-     "link": null
-    }
-   ],
-   "outputs": [
-    {
-     "color_off": null,
-     "color_on": null,
-     "dir": null,
-     "label": null,
-     "localized_name": "IMAGE",
-     "locked": null,
-     "name": "IMAGE",
-     "nameLocked": null,
-     "removable": null,
-     "shape": null,
-     "type": "IMAGE",
-     "pos": null,
-     "slot_index": null,
-     "links": [
-      33
-     ]
-    },
-    {
-     "color_off": null,
-     "color_on": null,
-     "dir": null,
-     "label": null,
-     "localized_name": "MASK",
-     "locked": null,
-     "name": "MASK",
-     "nameLocked": null,
-     "removable": null,
-     "shape": null,
-     "type": "MASK",
-     "pos": null,
-     "slot_index": null,
-     "links": null
-    }
-   ],
-   "title": "Image 2",
-   "properties": {
-    "Node name for S&R": "LoadImage"
-   },
-   "widgets_values": [
-    "anime_aodai.png",
-    "image"
-   ],
-   "widgets_values_named": {
-    "image": "anime_aodai.png",
-    "upload": "image"
-   }
-  },
-  {
-   "id": 28,
-   "type": "BatchImagesNode",
-   "pos": [
-    1896.9,
-    616
-   ],
-   "size": [
-    320,
-    66
-   ],
-   "flags": {},
-   "order": 27,
-   "mode": 0,
-   "showAdvanced": null,
-   "inputs": [
-    {
-     "color_off": null,
-     "color_on": null,
-     "dir": null,
-     "label": null,
-     "localized_name": "image0",
-     "locked": null,
-     "name": "images.image0",
-     "nameLocked": null,
-     "removable": null,
-     "shape": null,
-     "type": "IMAGE",
-     "pos": null,
-     "link": 32
-    },
-    {
-     "color_off": null,
-     "color_on": null,
-     "dir": null,
-     "label": null,
-     "localized_name": "image1",
-     "locked": null,
-     "name": "images.image1",
-     "nameLocked": null,
-     "removable": null,
-     "shape": 7,
-     "type": "IMAGE",
-     "pos": null,
-     "link": 33
-    },
-    {
-     "color_off": null,
-     "color_on": null,
-     "dir": null,
-     "label": null,
-     "localized_name": "image2",
-     "locked": null,
-     "name": "images.image2",
-     "nameLocked": null,
-     "removable": null,
-     "shape": 7,
-     "type": "IMAGE",
-     "pos": null,
-     "link": null
-    }
-   ],
-   "outputs": [
-    {
-     "color_off": null,
-     "color_on": null,
-     "dir": null,
-     "label": null,
-     "localized_name": "IMAGE",
-     "locked": null,
-     "name": "IMAGE",
-     "nameLocked": null,
-     "removable": null,
-     "shape": null,
-     "type": "IMAGE",
-     "pos": null,
-     "slot_index": null,
-     "links": [
-      34
-     ]
-    }
-   ],
-   "title": "References for the rewriter",
-   "properties": {
-    "Node name for S&R": "BatchImagesNode"
    }
   },
   {
@@ -3268,22 +3081,6 @@
    "STRING"
   ],
   [
-   32,
-   26,
-   0,
-   28,
-   0,
-   "IMAGE"
-  ],
-  [
-   33,
-   27,
-   0,
-   28,
-   1,
-   "IMAGE"
-  ],
-  [
    35,
    18,
    2,
@@ -3332,14 +3129,6 @@
    "CLIP"
   ],
   [
-   34,
-   28,
-   0,
-   12,
-   1,
-   "IMAGE"
-  ],
-  [
    9,
    10,
    0,
@@ -3362,6 +3151,14 @@
    3,
    0,
    "MODEL"
+  ],
+  [
+   41,
+   26,
+   0,
+   12,
+   1,
+   "IMAGE"
   ]
  ],
  "floatingLinks": null,
@@ -3380,7 +3177,7 @@
   },
   {
    "id": 2,
-   "title": "2. Reference images",
+   "title": "2. Ảnh cần edit (Image 1)",
    "bounding": [
     956.9,
     -90,
