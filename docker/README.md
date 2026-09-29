@@ -96,12 +96,12 @@ docker rm -f cogvideox-worker
 
 ## Endpoint MiniMax-H3
 
-Cùng image (`toitx/comfyui-video-runpod:1.3.1` — `start.sh` link mọi thư mục `diffusion_models/`,
+Cùng image (`toitx/comfyui-video-runpod:1.4.0` — `start.sh` link mọi thư mục `diffusion_models/`,
 `text_encoders/`, `vae/`, `loras/`... của repo cached model vào `/comfyui/models/`):
 
 | Mục | Giá trị |
 |---|---|
-| Container image | `toitx/comfyui-video-runpod:1.3.1` (SageAttention, triton backend cho int8; node GGUF cho Q4_K) |
+| Container image | `toitx/comfyui-video-runpod:1.4.0` (SageAttention, triton, node GGUF cho Q4_K, node Viggle cho Qwen-Image 2.1) |
 | Cached model | `toixtran/minimax-h3-comfy` + HF token Read |
 | Env | `MODEL_REPO=toixtran/minimax-h3-comfy` |
 | GPU | 24 GB PRO (4090) — model 21GB + text encoder 15.7GB chạy nhờ dynamic VRAM |

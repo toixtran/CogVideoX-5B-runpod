@@ -12,7 +12,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-IMAGE="${IMAGE:-toitx/comfyui-video-runpod}:${TAG:-1.3.1}"
+IMAGE="${IMAGE:-toitx/comfyui-video-runpod}:${TAG:-1.4.0}"
 
 docker rm -f cogvideox-worker >/dev/null 2>&1 || true
 docker run -d --name cogvideox-worker --gpus all -p 8000:8000 \

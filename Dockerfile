@@ -43,7 +43,13 @@ RUN uv pip install --python $UV_PYTHON "sageattention==1.0.6"
 RUN sed -i 's|--log-stdout &|--log-stdout ${COMFY_EXTRA_ARGS} \&|' /start.sh \
  && [ "$(grep -c 'COMFY_EXTRA_ARGS' /start.sh)" = 2 ]
 
+# Qwen-Image 2.1 turbo (Viggle): lịch sigma 6 bước + LoRA không merge. Ghim commit repo HF.
+ARG VIGGLE_COMMIT=bb26a0f38e5fe6c124aaccc9187a87eed5d9ed13
+ADD https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo/resolve/${VIGGLE_COMMIT}/comfyui/viggle_turbo.py \
+    /comfyui/custom_nodes/viggle_turbo.py
+
 COPY nodes/free_memory_after_run.py /comfyui/custom_nodes/free_memory_after_run.py
+COPY nodes/qwen_image21_runtime_lora.py /comfyui/custom_nodes/qwen_image21_runtime_lora.py
 
 # handler.py (repo) thay /handler.py gốc và import lại handler gốc.
 RUN mv /handler.py /worker_comfyui_handler.py

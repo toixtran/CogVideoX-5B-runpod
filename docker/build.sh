@@ -11,7 +11,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 IMAGE="${IMAGE:-toitx/comfyui-video-runpod}"
-TAG="${TAG:-1.3.1}"
+TAG="${TAG:-1.4.0}"
 
 # RunPod chạy x86_64: ép linux/amd64 để build trên máy khác (vd. Mac M-series) vẫn đúng.
 docker build --platform linux/amd64 -f "$ROOT/Dockerfile" -t "$IMAGE:$TAG" "$ROOT"
