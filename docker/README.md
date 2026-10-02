@@ -96,12 +96,12 @@ docker rm -f cogvideox-worker
 
 ## Endpoint MiniMax-H3
 
-Cùng image (`toitx/comfyui-video-runpod:1.4.0` — `start.sh` link mọi thư mục `diffusion_models/`,
+Cùng image (`toitx/comfyui-video-runpod:1.4.3` — `start.sh` link mọi thư mục `diffusion_models/`,
 `text_encoders/`, `vae/`, `loras/`... của repo cached model vào `/comfyui/models/`):
 
 | Mục | Giá trị |
 |---|---|
-| Container image | `toitx/comfyui-video-runpod:1.4.0` (SageAttention, triton, node GGUF cho Q4_K, node Viggle cho Qwen-Image 2.1) |
+| Container image | `toitx/comfyui-video-runpod:1.4.3` (SageAttention, triton, node GGUF cho Q4_K, node Viggle cho Qwen-Image 2.1, output kèm `metrics` VRAM/thời gian) |
 | Cached model | `toixtran/minimax-h3-comfy` + HF token Read |
 | Env | `MODEL_REPO=toixtran/minimax-h3-comfy` |
 | GPU | 24 GB PRO (4090) — model 21GB + text encoder 15.7GB chạy nhờ dynamic VRAM |
@@ -114,3 +114,17 @@ RUNPOD_API_KEY=... python3 scripts/runpod_client.py --endpoint-id <ID> \
   --workflow workflows/api/minimax_h3_i2v_turbo4_int8.json --image comfyui/input/chess_landscape.jpg --seed 42 --out h3.mp4
 ```
 
+
+### So sánh GPU (VRAM, thời gian, cold start, chi phí)
+
+Từ image 1.4.3, output mỗi job có thêm `metrics` (GPU, VRAM đỉnh theo nvidia-smi, log load/offload model và s/it của ComfyUI, số thứ tự job
+trên worker). Tạo mỗi GPU một endpoint giống hệt nhau (image, cached model, env, data center),
+chỉ khác nhóm GPU, **Max workers = 1**, idle timeout ngắn (vd. 5s) để đo được cold start:
+
+```bash
+RUNPOD_API_KEY=... python3 scripts/benchmark_runpod.py \
+  --endpoint "A6000=<ID1>@1.22" --endpoint "RTX5090=<ID2>@1.58" --warm 3 --cold-again --save-video bench/
+```
+
+Mặc định: workflow Q4_K 4 bước, 158 frame (6.58s), seed 42. In bảng VRAM đỉnh / thời gian nóng /
+cold start / $ mỗi video / $ mỗi giây âm thanh; số liệu thô ở `benchmark_runpod.json`.

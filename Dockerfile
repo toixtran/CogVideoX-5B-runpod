@@ -35,6 +35,12 @@ RUN cd /comfyui/custom_nodes \
  && git -C ComfyUI-GGUF checkout ${COMFYUI_GGUF_COMMIT} \
  && uv pip install --python $UV_PYTHON "gguf>=0.13.0"
 
+# Triton (SageAttention, --enable-triton-backend) biên dịch launcher C lúc chạy: cần gcc + Python.h,
+# thiếu thì job lỗi "Failed to find C compiler" (máy local có sẵn nên không thấy).
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends gcc libc6-dev python3.12-dev \
+ && rm -rf /var/lib/apt/lists/*
+
 # SageAttention 1.x (kernel Triton, không cần build): MiniMax-H3 lấy mẫu nhanh hơn ~18% trên Ada
 # (4070S 28.8 -> 23.5 s/bước), chất lượng như SDPA. Lỗi thì ComfyUI tự quay về pytorch attention.
 RUN uv pip install --python $UV_PYTHON "sageattention==1.0.6"
